@@ -28,6 +28,9 @@ const Home = () => {
   return (
     <div>
       <div className="text-right mr-5">
+        <a className="mr-3" href={`profile/${user?.uid}`}>
+          Profile
+        </a>
         <button onClick={handleLogout}>Logout</button>
       </div>
       <h5>Hey mf - {user?.email}</h5>

@@ -30,7 +30,7 @@ const getMenuItems = async (menuIds: string[]): Promise<FoodItem[]> => {
 
     if (foodItemDoc.exists()) {
       const foodItemData = foodItemDoc.data() as FoodItem;
-      menuItems.push(foodItemData);
+      menuItems.push({ ...foodItemData, id });
     }
   }
 
