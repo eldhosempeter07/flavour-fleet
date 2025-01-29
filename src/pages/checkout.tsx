@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Cart, Order } from "../util/interface";
+import { Cart, Order } from "../util/types";
 import { createOrder, getCartItems } from "../util/user";
 import { AuthContext } from "../util/authContext";
 import { useNavigate } from "react-router-dom";
@@ -40,8 +40,6 @@ const Checkout = () => {
 
     navigate(`/success/${id}`);
   };
-
-  console.log(loading);
 
   return (
     <div className="mx-5 mt-5">

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Restaurant } from "../util/interface";
+import { Restaurant } from "../util/types";
 import { getRestaurantById } from "../util/userRestaurant";
 import { addToCart } from "../util/user";
 import { onAuthStateChanged } from "firebase/auth";

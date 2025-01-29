@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { getCartItems } from "../util/user";
 import { AuthContext } from "../util/authContext";
-import { Cart } from "../util/interface";
+import { Cart } from "../util/types";
 import { useNavigate } from "react-router-dom";
 
 const CartPage = () => {

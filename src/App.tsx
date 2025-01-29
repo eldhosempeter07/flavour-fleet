@@ -9,6 +9,9 @@ import { AuthContext } from "./util/authContext";
 import Checkout from "./pages/checkout";
 import Success from "./pages/success";
 import Profile from "./pages/profile";
+import Orders from "./pages/orders";
+import Address from "./pages/address";
+import Header from "./components/header";
 // import logo from './logo.svg';
 
 function App() {
@@ -21,8 +24,9 @@ function App() {
 
   return (
     <div className="">
-      Flavour Fleet
+      <a href="/home">Flavour Fleet</a>
       {/* <SignUp /> */}
+      <Header />
       <Routes>
         <Route path="/" element={user == null ? <Login /> : <Home />} />
 
@@ -34,6 +38,8 @@ function App() {
         <Route path="/checkout/:id" element={<Checkout />} />
         <Route path="/success/:id" element={<Success />} />
         <Route path="/restaurant/:id" element={<RestaurantItem />} />
+        <Route path="/orders/:id" element={<Orders />} />
+        <Route path="/address/:id" element={<Address />} />
       </Routes>
     </div>
   );

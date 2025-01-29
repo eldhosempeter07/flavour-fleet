@@ -12,7 +12,7 @@ import {
   setDoc,
   where,
 } from "firebase/firestore";
-import { UserInfo } from "./interface";
+import { UserInfo } from "./types";
 
 export const signUp = async (email: string, password: string, name: string) => {
   try {

@@ -5,35 +5,9 @@ import { useNavigate } from "react-router-dom";
 import RestaurantList from "../pages/restaurantList";
 
 const Home = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const navigate = useNavigate();
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      if (currentUser) {
-        setUser(currentUser);
-      } else {
-        setUser(null);
-      }
-    });
-
-    return () => unsubscribe();
-  }, []);
-
-  console.log(user?.email);
-
-  const handleLogout = () => {
-    auth.signOut();
-    navigate("/login");
-  };
   return (
     <div>
-      <div className="text-right mr-5">
-        <a className="mr-3" href={`profile/${user?.uid}`}>
-          Profile
-        </a>
-        <button onClick={handleLogout}>Logout</button>
-      </div>
-      <h5>Hey mf - {user?.email}</h5>
+      {/* <h5>Hey mf - {user?.email}</h5> */}
       <RestaurantList />
     </div>
   );

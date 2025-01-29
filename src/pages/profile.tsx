@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { getUserInfo, updatetUserInfo } from "../util/auth";
 import { AuthContext } from "../util/authContext";
-import { UserInfo } from "../util/interface";
+import { UserInfo } from "../util/types";
 
 const Profile = () => {
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);

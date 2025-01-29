@@ -50,9 +50,25 @@ export type Order = {
   orderItems: string[];
 };
 
+export type userOrders = {
+  id: string;
+  orderInfo: Order;
+  items: FoodItem[];
+};
+
 export type UserInfo = {
   id: string;
   name: string;
   email: string;
   phone?: string;
+};
+
+export type AddressType = {
+  id?: string;
+  userId?: string;
+  street: string;
+  city: string;
+  phone: string;
+  zipcode: string;
+  fullName: string;
 };
