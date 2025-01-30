@@ -1,13 +1,15 @@
+// src/components/SignUp.tsx
 import React, { useState } from "react";
-import { login } from "../util/auth";
+import { signUp } from "../util/auth";
 
-const Login = () => {
+const SignUp: React.FC = () => {
   const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await login(email, password);
+    await signUp(email, password, name);
   };
 
   return (
@@ -21,11 +23,23 @@ const Login = () => {
       </a>
       <div className="w-full bg-white rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0">
         <div className="p-7 space-y-4">
-          <h1 className="text-xl text-center font-bold leading-tight tracking-tight text-gray-900 md:text-2xl ">
-            LOGIN
+          <h1 className="text-xl text-center font-bold leading-tight tracking-tight text-gray-700 md:text-2xl ">
+            Register
           </h1>
+          <form onSubmit={handleSubmit}>
+            <div>
+              <label className="block mb-3 font-medium text-gray-900">
+                Email
+              </label>
+              <input
+                name="name"
+                value={name}
+                placeholder="Name"
+                className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
 
-          <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
               <label className="block mb-3 font-medium text-gray-900">
                 Email
@@ -58,9 +72,8 @@ const Login = () => {
               Submit
             </button>
             <div className="text-center">
-              <a href="/register" className="hover:underline">
-                {" "}
-                Create an account
+              <a href="/login" className="hover:underline">
+                Already have an account? Login
               </a>
             </div>
           </form>
@@ -70,4 +83,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SignUp;

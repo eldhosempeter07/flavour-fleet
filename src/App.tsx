@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
-import SignUp from "./components/signIn";
+import SignUp from "./components/signUp";
 import Login from "./components/login";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import Home from "./components/home";
 import RestaurantItem from "./pages/restaurantItem";
 import Cart from "./pages/cart";
@@ -20,19 +20,33 @@ function App() {
     loading: true,
   };
 
-  console.log(loading);
-
+  if (loading) {
+    return <div>Loading ...</div>;
+  }
   return (
     <div className="">
       <a href="/home">Flavour Fleet</a>
-      {/* <SignUp /> */}
       <Header />
       <Routes>
-        <Route path="/" element={user == null ? <Login /> : <Home />} />
+        <Route
+          path="/"
+          element={
+            user == null ? <Navigate to="/login" /> : <Navigate to="/home" />
+          }
+        />
 
-        <Route path="/register" element={<SignUp />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/home" element={<Home />} />
+        <Route
+          path="/register"
+          element={user == null ? <SignUp /> : <Navigate to="/home" />}
+        />
+        <Route
+          path="/login"
+          element={user == null ? <Login /> : <Navigate to="/home" />}
+        />
+        <Route
+          path="/home"
+          element={user == null ? <Navigate to="/login" /> : <Home />}
+        />
         <Route path="/profile/:id" element={<Profile />} />
         <Route path="/cart/:id" element={<Cart />} />
         <Route path="/checkout/:id" element={<Checkout />} />
