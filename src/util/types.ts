@@ -7,6 +7,8 @@ export type FoodItem = {
   price: number;
   rating: number;
   restaurantId: string;
+  count?: number;
+  ingredients: string;
 };
 
 export type Restaurant = {
@@ -22,17 +24,22 @@ export type Restaurant = {
   timing?: { close: string; day: string; holiday: boolean; open: string }[];
 };
 
-export type CartInfo = {
+type CartItem = {
   count: number;
   itemId: string;
+};
+
+export type CartInfo = {
+  items: CartItem[];
   restarantId: string;
   userId: string;
 };
 
 export type Cart = {
   cartinfo: CartInfo;
-  items: FoodItem;
-  resturant: Restaurant;
+  items: FoodItem[];
+  resturant: Restaurant | null;
+  totalAmount: number;
 };
 
 export type Fees = {
@@ -41,13 +48,18 @@ export type Fees = {
   subTotal: string;
 };
 
+export type OrderItems = {
+  itemId: string;
+  count: number;
+};
+
 export type Order = {
   addressId: string;
   fees: Fees;
   instruction: string;
   payId: string;
   userId: string;
-  orderItems: string[];
+  orderItems: OrderItems[];
 };
 
 export type userOrders = {

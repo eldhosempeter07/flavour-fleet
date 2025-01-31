@@ -3,7 +3,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
-import { auth, db } from "./firebase";
+import { auth1 as auth, db1 as db } from "./firebase";
 import {
   collection,
   doc,

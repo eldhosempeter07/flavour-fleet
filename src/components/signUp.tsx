@@ -27,9 +27,9 @@ const SignUp: React.FC = () => {
             Register
           </h1>
           <form onSubmit={handleSubmit}>
-            <div>
-              <label className="block mb-3 font-medium text-gray-900">
-                Email
+            <div className="mb-2">
+              <label className="block mb-2 font-medium text-gray-900">
+                Name
               </label>
               <input
                 name="name"
@@ -40,7 +40,7 @@ const SignUp: React.FC = () => {
               />
             </div>
 
-            <div>
+            <div className="mb-2">
               <label className="block mb-3 font-medium text-gray-900">
                 Email
               </label>
@@ -66,7 +66,7 @@ const SignUp: React.FC = () => {
               />
             </div>
             <button
-              className="bg-blue-500 capitalize font-semibold text-lg hover:bg-blue-700 w-full py-3 rounded text-white"
+              className="mt-5 mb-3 bg-gray-700 hover:bg-gray-950 capitalize font-semibold text-lg w-full py-3 rounded text-white"
               type="submit"
             >
               Submit

@@ -2,6 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDGBuFNpKk07GorLfYM1HFf9ZjdStEgKgA",
@@ -13,11 +14,24 @@ const firebaseConfig = {
   appId: "1:1006401540153:web:2f74ce7b57dff648867de8",
 };
 
-// Initialize Firebase
+const firebaseConfig2 = {
+  apiKey: "AIzaSyDwHkkIpte86JXQ6sja6HydSOzb840BMiU",
+  authDomain: "yumhub-d8edd.firebaseapp.com",
+  projectId: "yumhub-d8edd",
+  storageBucket: "yumhub-d8edd.appspot.com",
+  messagingSenderId: "12957115981",
+  appId: "1:12957115981:web:f3201f6d21ebe023c2de04",
+};
+
 const app = initializeApp(firebaseConfig);
+// Initialize Firebase
+const app2 = initializeApp(firebaseConfig2, "storage");
 
-const auth = getAuth(app);
+// Initialize Firebase
 
-const db = getFirestore(app);
+const auth1 = getAuth(app);
 
-export { auth, db, onAuthStateChanged };
+const db1 = getFirestore(app);
+const storage1 = getStorage(app2);
+
+export { auth1, db1, storage1, onAuthStateChanged };

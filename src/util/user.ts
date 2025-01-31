@@ -7,18 +7,19 @@ import {
   getDocs,
   query,
   setDoc,
+  updateDoc,
   where,
 } from "firebase/firestore";
-import { db } from "./firebase";
+import { db1 as db } from "./firebase";
 import {
   AddressType,
   CartInfo,
   FoodItem,
   Order,
+  OrderItems,
   Restaurant,
   userOrders,
 } from "./types";
-import { getMenuItems } from "./userRestaurant";
 
 export const addToCart = async (
   id: string,
@@ -27,14 +28,38 @@ export const addToCart = async (
   userId: string
 ) => {
   try {
-    await addDoc(collection(db, "carts"), {
-      itemId: id,
-      count,
-      restarantId: resId,
-      userId,
-    });
+    const cartRef = doc(db, "carts", userId);
+    const cartSnap = await getDoc(cartRef);
+    console.log(id, count, resId, userId);
+
+    if (cartSnap.exists()) {
+      const cartData = cartSnap.data();
+      let updatedItems = cartData.items || [];
+
+      const existingItemIndex = updatedItems.findIndex(
+        (item: any) => item.itemId === id
+      );
+
+      if (existingItemIndex !== -1) {
+        updatedItems[existingItemIndex].count += count;
+      } else {
+        updatedItems.push({ itemId: id, count });
+      }
+
+      console.log(updatedItems);
+
+      await updateDoc(cartRef, { items: updatedItems });
+    } else {
+      await setDoc(cartRef, {
+        items: [{ itemId: id, count }],
+        restarantId: resId,
+        userId,
+      });
+
+      return 0;
+    }
   } catch (error) {
-    console.log(error);
+    console.error("Error adding item to cart:", error);
   }
 };
 
@@ -42,28 +67,58 @@ export const getCartItems = async (userId: string) => {
   try {
     if (userId) {
       const uid = userId;
+
+      // Fetch the user's cart document
       const cartQuery = query(
         collection(db, "carts"),
         where("userId", "==", uid)
       );
       const cartSnapshot = await getDocs(cartQuery);
-      const cartinfo = cartSnapshot.docs[0].data() as CartInfo;
 
-      const itemDoc = await getDoc(doc(db, "foodItems", cartinfo.itemId));
-      const restaurantDoc = await getDoc(
-        doc(db, "restaurants", cartinfo.restarantId)
-      );
-      if (itemDoc.exists() && restaurantDoc.exists()) {
-        const items = itemDoc.data() as FoodItem;
-        const resturant = restaurantDoc.data() as Restaurant;
+      if (!cartSnapshot.empty) {
+        // Get the first document since there's only one cart per user
+        const cartinfo = cartSnapshot.docs[0].data() as CartInfo;
 
-        const cartData = { cartinfo, items, resturant };
+        // Initialize an array to store the full cart details
+        const cartData = {
+          cartinfo,
+          items: [] as (FoodItem & { count: number })[], // Typing the items array
+          resturant: null as Restaurant | null, // Typing resturant as Restaurant or null
+          totalAmount: 0, // Add totalAmount property to store total amount
+        };
+
+        // Fetch restaurant info from the cart
+        const restaurantDoc = await getDoc(
+          doc(db, "restaurants", cartinfo.restarantId)
+        );
+        if (restaurantDoc.exists()) {
+          cartData.resturant = restaurantDoc.data() as Restaurant;
+        }
+
+        const itemPromises = cartinfo.items.map(async (item) => {
+          const itemDoc = await getDoc(doc(db, "foodItems", item.itemId));
+          if (itemDoc.exists()) {
+            const itemData = itemDoc.data() as FoodItem;
+            // Calculate total price for the item (item price * count)
+            const totalItemPrice = itemData.price * item.count;
+            // Add the item's total price to the overall cart total
+            cartData.totalAmount += totalItemPrice;
+
+            return { ...itemData, count: item.count, id: itemDoc.id };
+          }
+          return undefined;
+        });
+
+        const items = await Promise.all(itemPromises);
+        cartData.items = items.filter(
+          (item): item is FoodItem & { count: number } => item !== undefined
+        );
 
         return cartData;
       }
     }
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching cart items:", error);
   }
 };
 
@@ -116,6 +171,29 @@ export const getOrders = async (
     );
 
     return orders;
+  }
+
+  return null;
+};
+
+export const getOrderById = async (
+  orderId: string
+): Promise<userOrders | null> => {
+  // Get the order document by orderId
+  const orderDocRef = doc(db, "orders", orderId);
+  const orderDocSnapshot = await getDoc(orderDocRef);
+
+  if (orderDocSnapshot.exists()) {
+    const orderData = orderDocSnapshot.data();
+    const itemIds = orderData?.orderInfo.orderItems;
+
+    const items = await getMenuItems(itemIds);
+
+    return {
+      id: orderDocSnapshot.id,
+      orderInfo: orderData?.orderInfo,
+      items,
+    };
   }
 
   return null;
@@ -190,4 +268,20 @@ export const deleteAddress = async (id: string) => {
   } catch (error) {
     console.log(error);
   }
+};
+
+export const getMenuItems = async (
+  menuIds: OrderItems[]
+): Promise<FoodItem[]> => {
+  const menuItems: FoodItem[] = [];
+  for (const item of menuIds) {
+    const foodItemDoc = await getDoc(doc(db, "foodItems", item.itemId));
+
+    if (foodItemDoc.exists()) {
+      const foodItemData = foodItemDoc.data() as FoodItem;
+      menuItems.push({ ...foodItemData, id: item.itemId });
+    }
+  }
+
+  return menuItems;
 };

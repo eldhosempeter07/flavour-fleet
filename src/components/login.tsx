@@ -16,7 +16,6 @@ const Login = () => {
         href="/"
         className="flex items-center mb-6 text-3xl font-semibold text-orange-500 dark:text-white"
       >
-        {/* <img class="w-8 h-8 mr-2" src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg" alt="logo"> */}
         Flavour Fleet
       </a>
       <div className="w-full bg-white rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0">
@@ -52,7 +51,7 @@ const Login = () => {
               />
             </div>
             <button
-              className="bg-blue-500 capitalize font-semibold text-lg hover:bg-blue-700 w-full py-3 rounded text-white"
+              className="bg-gray-700 hover:bg-gray-950 capitalize font-semibold text-lg  w-full py-3 rounded text-white"
               type="submit"
             >
               Submit

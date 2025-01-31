@@ -1,5 +1,5 @@
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "./firebase";
+import { db1 as db } from "./firebase";
 import { FoodItem, Restaurant } from "./types";
 
 export const getRestaurantById = async (restaurantId: string) => {
@@ -23,7 +23,7 @@ export const getRestaurantById = async (restaurantId: string) => {
   }
 };
 
-export const getMenuItems = async (menuIds: string[]): Promise<FoodItem[]> => {
+const getMenuItems = async (menuIds: string[]): Promise<FoodItem[]> => {
   const menuItems: FoodItem[] = [];
   for (const id of menuIds) {
     const foodItemDoc = await getDoc(doc(db, "foodItems", id));

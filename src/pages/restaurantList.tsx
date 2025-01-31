@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { collection, getDocs, query, where } from "firebase/firestore";
-import { db } from "../util/firebase";
+import { db1 } from "../util/firebase";
 import { Restaurant } from "../util/types";
+import RestaurantCard from "../components/resCard";
 
 const RestaurantList: React.FC = () => {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
 
   useEffect(() => {
     const fetchResturants = async () => {
-      const querysnapshot = await getDocs(collection(db, "restaurants"));
+      const querysnapshot = await getDocs(collection(db1, "restaurants"));
       const restaurantItems: Restaurant[] = [];
 
       querysnapshot.forEach((doc) => {
@@ -33,11 +34,9 @@ const RestaurantList: React.FC = () => {
   return (
     <div>
       {restaurants.map((restaurant) => (
-        <div>
-          <a href={`restaurant/${restaurant.id}`}>
-            {restaurant.name} - {restaurant.location}
-          </a>
-        </div>
+        <a href={`restaurant/${restaurant.id}`}>
+          <RestaurantCard restaurant={restaurant} />
+        </a>
       ))}
     </div>
   );
