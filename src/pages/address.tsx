@@ -8,8 +8,11 @@ import {
   updateAddress,
 } from "../util/user";
 import { AuthContext } from "../util/authContext";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Address = () => {
+  const { state } = useLocation();
+  const navigate = useNavigate();
   const [show, setShow] = useState(false);
   const [type, setType] = useState("Add");
   const [editAddress, setEditAddress] = useState<string | null>(null);
@@ -33,9 +36,8 @@ const Address = () => {
     fetchAddresses();
   }, [user]);
 
-  console.log(addresses);
-
   const handlePopup = () => {
+    setType("Add");
     setShow((prev) => !prev);
   };
 
@@ -43,6 +45,9 @@ const Address = () => {
     if (type === "Edit" && editAddress) {
       await updateAddress({ ...address, id: editAddress }, editAddress);
       handlePopup();
+      if (state?.from === "checkout") {
+        navigate(`/checkout/${user?.uid}`);
+      }
       return fetchAddresses();
     }
     const res = await createAddress({ ...address, userId: user?.uid });
@@ -56,41 +61,70 @@ const Address = () => {
     await deleteAddress(id);
     fetchAddresses();
   };
+
+  useEffect(() => {
+    if (state?.from === "checkout") {
+      setType("Edit");
+      setEditAddress(state?.id);
+      setShow(true);
+    }
+  }, [state]);
+
   return (
-    <div>
-      <h3>Address</h3>
-      <button onClick={handlePopup}>Add Address</button>
-      {addresses?.map((address) => (
-        <div className="flex">
-          <div>
-            <h2>{address.fullName}</h2>
-            <p>{address.street}</p>
-            <p>
-              {address.city}, {address.zipcode}
-            </p>
-            <p>Phone: {address.phone}</p>
-          </div>
-          <div className="ml-[50px]">
-            <button
-              className="mr-3"
-              onClick={() => {
-                setType("Edit");
-                address.id && setEditAddress(address.id);
-                setShow(true);
-              }}
-            >
-              Edit
-            </button>
-            <button
-              onClick={() => {
-                address.id && handleDelete(address.id);
-              }}
-            >
-              Delete
-            </button>
-          </div>
+    <div className="mt-10">
+      <h3 className=" text-xl text-center font-bold leading-tight tracking-tight text-gray-900  ">
+        Address
+      </h3>
+      <div className="text-right mr-5 my-5">
+        <button
+          className="bg-gray-900 rounded py-2 px-2 text-white text-sm font-bold"
+          onClick={handlePopup}
+        >
+          Add Address
+        </button>
+      </div>
+      <div className="flex items-center justify-center rounded ">
+        <div className="w-full mx-3 rounded sm:mx-0 sm:w-1/2 border-2 border-gray-100 py-5">
+          {addresses?.map((address) => (
+            <div className="flex w-full bg-white rounded items-center ">
+              <div className=" mb-3 flex-auto ml-3">
+                <h5 className="text-xl font-bold  text-gray-900 truncate">
+                  {address.fullName}
+                </h5>
+                <p className="text-sm mt-[8px]  text-gray-600 truncate">
+                  {address.street}
+                </p>
+                <p className="text-sm mt-[2px]  text-gray-600 truncate">
+                  {address.city},{address.zipcode}
+                </p>
+                <p className="text-sm mt-[2px]  text-gray-600 truncate">
+                  {address.phone}
+                </p>
+              </div>
+              <div className="flex justify-between mr-3">
+                <button
+                  className="mr-2 text-gray-600 hover:underline font-bold cursor-pointer"
+                  onClick={() => {
+                    setType("Edit");
+                    address.id && setEditAddress(address.id);
+                    setShow(true);
+                  }}
+                >
+                  Edit
+                </button>
+                <button
+                  className="text-red-500 mr-2 font-bold cursor-pointer hover:underline"
+                  onClick={() => {
+                    address.id && handleDelete(address.id);
+                  }}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
-      ))}
+      </div>
 
       {show ? (
         <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center z-50">

@@ -25,21 +25,21 @@ const CartCard: React.FC<CartCardProps> = ({
   }
 
   return (
-    <div className="flex bg-white rounded items-center justify-center ">
+    <div className="flex flex-wrap bg-white rounded items-center justify-center mb-10 ">
       <div className="relative w-52 h-36 flex justify-center items-center">
         {loading ? (
           <span className="text-gray-500">Loading...</span>
         ) : imageUrl ? (
           <img
-            className="w-full h-full object-cover  rounded-lg pointer-events-none"
+            className="w-full h-full object-contain rounded pointer-events-none"
             src={imageUrl}
             alt={foodItem.name}
           />
         ) : null}
       </div>
 
-      <div className="ml-20 mb-3 flex-auto">
-        <h5 className="text-xl font-bold  text-gray-900 truncate">
+      <div className="md:ml-20 ml-0 mb-3 flex-auto">
+        <h5 className="text-lg font-bold  text-gray-900 truncate">
           {foodItem.name}
         </h5>
         <p className="text-sm mt-[8px]  text-gray-600 truncate">
@@ -48,7 +48,7 @@ const CartCard: React.FC<CartCardProps> = ({
         <p className="text-sm mt-[2px]  text-gray-600 truncate">
           {foodItem.ingredients}
         </p>
-        <div className="flex justify-between">
+        <div className="flex flex-wrap justify-between">
           <h4 className="text-lg mt-10 font-bold  text-gray-900 truncate">
             ${foodItem.price}
           </h4>
@@ -57,7 +57,7 @@ const CartCard: React.FC<CartCardProps> = ({
               {foodItem.count}
             </h4>
           ) : (
-            <div className="flex mt-9">
+            <div className="flex flex-wrap mt-9">
               <h4
                 className="text-2xl  mr-2 font-bold cursor-pointer"
                 onClick={() => {

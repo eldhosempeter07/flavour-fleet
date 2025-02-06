@@ -5,22 +5,22 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDGBuFNpKk07GorLfYM1HFf9ZjdStEgKgA",
-  authDomain: "flavour-fleet.firebaseapp.com",
-  databaseURL: "https://flavour-fleet-default-rtdb.firebaseio.com",
-  projectId: "flavour-fleet",
-  storageBucket: "flavour-fleet.firebasestorage.app",
-  messagingSenderId: "1006401540153",
-  appId: "1:1006401540153:web:2f74ce7b57dff648867de8",
+  apiKey: process.env.REACT_APP_KEY1,
+  authDomain: process.env.REACT_APP_AUTH_DOMAIN1,
+  databaseURL: process.env.REACT_APP_DATABASE_URL1,
+  projectId: process.env.REACT_APP_PROJECT_ID1,
+  storageBucket: process.env.REACT_APP_STORAGE_BUCKET1,
+  messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID1,
+  appId: process.env.REACT_APP_APP_ID1,
 };
 
 const firebaseConfig2 = {
-  apiKey: "AIzaSyDwHkkIpte86JXQ6sja6HydSOzb840BMiU",
-  authDomain: "yumhub-d8edd.firebaseapp.com",
-  projectId: "yumhub-d8edd",
-  storageBucket: "yumhub-d8edd.appspot.com",
-  messagingSenderId: "12957115981",
-  appId: "1:12957115981:web:f3201f6d21ebe023c2de04",
+  apiKey: process.env.REACT_APP_KEY2,
+  authDomain: process.env.REACT_APP_AUTH_DOMAIN2,
+  projectId: process.env.REACT_APP_PROJECT_ID2,
+  storageBucket: process.env.REACT_APP_STORAGE_BUCKET2,
+  messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID2,
+  appId: process.env.REACT_APP_APP_ID2,
 };
 
 const app = initializeApp(firebaseConfig);

@@ -12,7 +12,21 @@ const CartPage = () => {
     user: null,
     loading: true,
   };
+
   const [cartItems, setCartItems] = useState<Cart | undefined>(undefined);
+
+  const fetchCartItems = async () => {
+    if (user?.uid) {
+      const items = await getCartItems(user?.uid);
+      console.log(items);
+
+      setCartItems(items);
+    }
+  };
+
+  useEffect(() => {
+    fetchCartItems();
+  }, []);
 
   const addItemToCart = (itemid: string, count: number) => {
     if (cartItems?.cartinfo?.restarantId && user) {
@@ -21,19 +35,6 @@ const CartPage = () => {
     }
     navigate("/login");
   };
-
-  const fetchCartItems = async () => {
-    if (user?.uid) {
-      const items = await getCartItems(user?.uid);
-      setCartItems(items);
-    }
-  };
-
-  console.log(cartItems);
-
-  useEffect(() => {
-    fetchCartItems();
-  }, []);
 
   if (loading) {
     return <div>Loading..</div>;
@@ -48,11 +49,11 @@ const CartPage = () => {
       ) : (
         <>
           <div className="w-full max-w-6xl">
-            <h3 className="text-center font-bold text-xl uppercase ">Cart</h3>
+            <h3 className="text-center font-bold text-lg uppercase ">Cart</h3>
             <div className="border-2 border-gray-200 rounded px-3 py-4 mt-10 ">
               <a
                 href={`/restaurant/${cartItems?.cartinfo?.restarantId}`}
-                className="ml-5 font-bold text-gray-800 underline uppercase text-xl"
+                className="ml-5 font-bold text-gray-800 underline uppercase text-lg"
               >
                 {cartItems?.resturant?.name}
               </a>
@@ -62,9 +63,9 @@ const CartPage = () => {
                 </div>
               ))}
             </div>
-            <div className="text-right mb-4">
+            <div className=" text-center sm:mb-4 mb-10 ">
               <button
-                className="bg-black uppercase rounded px-3  py-3 mt-10 text-white"
+                className="bg-black uppercase rounded px-3 text-sm font-semibold py-3 mt-10 text-white"
                 onClick={() => navigate(`/checkout/${user?.uid}`)}
               >
                 Checkout

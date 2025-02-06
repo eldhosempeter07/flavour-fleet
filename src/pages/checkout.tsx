@@ -15,6 +15,7 @@ const Checkout = () => {
     undefined
   );
   const [cartItems, setCartItems] = useState<Cart | undefined>(undefined);
+
   useEffect(() => {
     const fetchCartItems = async () => {
       if (user?.uid) {
@@ -25,6 +26,8 @@ const Checkout = () => {
 
     fetchCartItems();
   }, []);
+
+  console.log(cartItems);
 
   const fetchAddresses = async () => {
     if (user) {
@@ -41,6 +44,8 @@ const Checkout = () => {
   const handlePlaceOrder = async () => {
     const orderInfo = {
       addressId: addresses !== undefined && addresses[0].id,
+      restaurantId: cartItems?.cartinfo.restarantId,
+      createdAt: new Date(),
       fees: {
         deliveryFee: "3.99",
         subTotal: cartItems?.totalAmount.toString(),
@@ -48,29 +53,42 @@ const Checkout = () => {
           cartItems?.totalAmount !== undefined &&
           (cartItems?.totalAmount * 0.13).toFixed(2)
         ).toString(),
+        total:
+          cartItems?.totalAmount &&
+          (
+            3.99 +
+            cartItems?.totalAmount +
+            cartItems?.totalAmount * 0.13
+          ).toFixed(2),
       },
       instruction: "",
       payId: "PTR12RFJ32",
       userId: user?.uid,
       orderItems: cartItems?.cartinfo.items,
+      status: "Pending",
     } as Order;
     const id = await createOrder(orderInfo);
-    console.log(id);
-    navigate(`/success/${id}`);
+    navigate(`/success/${id}`, {
+      state: "checkout",
+    });
   };
 
+  console.log(
+    cartItems?.totalAmount &&
+      (3.99 + cartItems?.totalAmount + cartItems?.totalAmount * 0.13).toFixed(2)
+  );
+
+  const handleEditAddress = (id: string) => {
+    navigate(`/address/${user?.uid}`, {
+      state: { from: "checkout", id },
+    });
+  };
   return (
     <div className=" mt-5">
-      <div className="flex justify-evenly">
+      <div className="flex flex-wrap justify-evenly">
         <div className="w-full max-w-[55rem]">
           <h3 className="text-center font-bold text-xl uppercase ">Checkout</h3>
-          <div className="border-2 border-gray-200 rounded px-3 py-4 mt-10 ">
-            {/* <a
-              href={`/restaurant/${cartItems?.cartinfo?.restarantId}`}
-              className="ml-5 font-bold text-gray-800 underline uppercase text-xl"
-            >
-              {cartItems?.resturant?.name}
-            </a> */}
+          <div className="md:border-2 md:border-gray-200 border-none rounded px-3 py-4 mt-7 mb-5 ">
             {cartItems?.items.map((item) => (
               <div key={item.id} className="m-7">
                 <CartCard foodItem={item} type="checkout" />
@@ -78,54 +96,51 @@ const Checkout = () => {
             ))}
           </div>
         </div>
-        <div className="mt-24 flex flex-col justify-start w-1/4 rounded-md">
+        <div className="mt-24 flex flex-col justify-start lg:mx-0 md:mx-10 mx-5 lg:w-1/4 md:w-full w-full rounded-md">
           <div>
             {addresses?.map((address) => (
               <div className="flex justify-between">
                 <div>
-                  <h4 className="text-lg text-gray-700 uppercase font-bold">
+                  <h4 className="text-[1rem] text-gray-700 uppercase font-bold">
                     {address.fullName}
                   </h4>
-                  <h4 className="text-gray-600 font-semibold mt-2">
+                  <h4 className="text-gray-600 text-sm font-semibold mt-2">
                     {address.street}
                   </h4>
-                  <h4 className="text-gray-600 font-semibold">
+                  <h4 className="text-gray-600 text-sm font-semibold">
                     {address.city}, {address.zipcode}
                   </h4>
-                  <h4 className="text-gray-600 font-semibold">
+                  <h4 className="text-gray-600 text-sm font-semibold">
                     {address.phone}
                   </h4>
                 </div>
-                <div className="mt-10 mr-5">
-                  <a
-                    className="underline tex-lg font-semibold "
-                    href={`/address/${user?.uid}`}
+                <div className="mt-10 mr-1">
+                  <button
+                    className="underline tex-sm font-semibold "
+                    onClick={() => address?.id && handleEditAddress(address.id)}
                   >
                     Edit
-                  </a>
+                  </button>
                 </div>
               </div>
             ))}
           </div>
-          {/* <div className="mt-10">
-            <input
-              type="text"
-              placeholder="Coupons"
-              className="bg-white border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
-            />
-          </div> */}
 
           <div className="mt-10 ">
-            <h4 className="text-lg font-[700] uppercase text-gray-800 mb-2">
+            <h4 className="text-[1rem] font-[700] uppercase text-gray-800 mb-2">
               Price Details
             </h4>
             <div className="">
               <div className="flex justify-between">
-                <h4 className=" text-gray-600 ">Sub Total</h4>
-                <h4 className="font-semibold"> ${cartItems?.totalAmount}</h4>
+                <h4 className=" text-gray-600 text-sm font-semibold">
+                  Sub Total
+                </h4>
+                <h4 className="font-semibold">
+                  ${cartItems?.totalAmount?.toFixed(2)}
+                </h4>
               </div>
               <div className="flex justify-between">
-                <h4 className=" text-gray-600">Tax</h4>
+                <h4 className=" text-gray-600 text-sm  font-semibold">Tax</h4>
                 <h4 className="font-semibold">
                   $
                   {cartItems?.totalAmount !== undefined &&
@@ -134,14 +149,16 @@ const Checkout = () => {
               </div>
 
               <div className="flex justify-between">
-                <h4 className=" text-gray-600">Delivery Charges</h4>
+                <h4 className=" text-gray-600 text-sm  font-semibold">
+                  Delivery Charges
+                </h4>
                 <h4 className="font-semibold">$3.99</h4>
               </div>
               <div className="flex justify-between">
-                <h4 className="font-semibold text-lg text-gray-800 mt-2">
+                <h4 className="font-semibold text-[1rem] text-gray-800 mt-2">
                   Total Amount
                 </h4>
-                <h4 className="font-semibold text-lg text-gray-800 mt-2">
+                <h4 className="font-semibold text-[1rem] text-gray-800 mt-2">
                   $
                   {cartItems?.totalAmount !== undefined &&
                     (
@@ -154,19 +171,13 @@ const Checkout = () => {
             </div>
           </div>
           <button
-            className="bg-black uppercase rounded px-3 py-3 mt-10 text-white"
+            className="bg-black font-semibold uppercase rounded text-[1rem] px-3 py-3 mt-8 text-white"
             onClick={handlePlaceOrder}
           >
             Place Order
           </button>
         </div>
       </div>
-
-      {/* <button
-        className="bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded text-white mt-4"
-      >
-        Place Order
-      </button> */}
     </div>
   );
 };

@@ -1,3 +1,8 @@
+export type Categories = {
+  name: string;
+  id: string;
+};
+
 export type FoodItem = {
   id: string;
   category: string;
@@ -24,7 +29,7 @@ export type Restaurant = {
   timing?: { close: string; day: string; holiday: boolean; open: string }[];
 };
 
-type CartItem = {
+export type CartItem = {
   count: number;
   itemId: string;
 };
@@ -40,12 +45,14 @@ export type Cart = {
   items: FoodItem[];
   resturant: Restaurant | null;
   totalAmount: number;
+  count?: number;
 };
 
 export type Fees = {
   tax: string;
   deliveryFee: string;
   subTotal: string;
+  total: string;
 };
 
 export type OrderItems = {
@@ -53,19 +60,29 @@ export type OrderItems = {
   count: number;
 };
 
+export type Timestamp = {
+  seconds: number;
+  nanoseconds: number;
+};
+
 export type Order = {
+  createdAt: Date | Timestamp;
   addressId: string;
+  restaurantId: string;
   fees: Fees;
   instruction: string;
   payId: string;
   userId: string;
   orderItems: OrderItems[];
+  status: string;
 };
 
 export type userOrders = {
   id: string;
   orderInfo: Order;
   items: FoodItem[];
+  totalCount?: number;
+  restaurant?: Restaurant;
 };
 
 export type UserInfo = {

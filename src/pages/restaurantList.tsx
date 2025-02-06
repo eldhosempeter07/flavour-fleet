@@ -3,41 +3,38 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import { db1 } from "../util/firebase";
 import { Restaurant } from "../util/types";
 import RestaurantCard from "../components/resCard";
+import { getRestaurants } from "../util/userRestaurant";
 
-const RestaurantList: React.FC = () => {
-  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
+type RestaurantListProps = {
+  restaurants: Restaurant[] | null;
+  category: string | null;
+};
 
-  useEffect(() => {
-    const fetchResturants = async () => {
-      const querysnapshot = await getDocs(collection(db1, "restaurants"));
-      const restaurantItems: Restaurant[] = [];
-
-      querysnapshot.forEach((doc) => {
-        const data = doc.data();
-        restaurantItems.push({
-          id: doc.id,
-          email: data.email || "",
-          image: data.image || "",
-          location: data.location || "",
-          name: data.name || "",
-          phone: data.phone || "",
-          type: data.type || "",
-        });
-      });
-
-      setRestaurants(restaurantItems);
-    };
-
-    fetchResturants();
-  });
-
+const RestaurantList: React.FC<RestaurantListProps> = ({
+  restaurants,
+  category,
+}) => {
   return (
-    <div>
-      {restaurants.map((restaurant) => (
-        <a href={`restaurant/${restaurant.id}`}>
-          <RestaurantCard restaurant={restaurant} />
-        </a>
-      ))}
+    <div className="md:mx-10 mx-2">
+      {category !== null ? (
+        <h3 className=" text-orange-600">
+          <span className="font-bold text-xl uppercase">
+            {category} Restaurants{" "}
+          </span>
+          <span className="font-semibold text-gray-700">
+            {" "}
+            ({restaurants?.length} Results)
+          </span>
+        </h3>
+      ) : null}
+      <div className="flex  flex-wrap ">
+        {restaurants &&
+          restaurants.map((restaurant) => (
+            <a href={`restaurant/${restaurant.id}`}>
+              <RestaurantCard restaurant={restaurant} />
+            </a>
+          ))}
+      </div>
     </div>
   );
 };

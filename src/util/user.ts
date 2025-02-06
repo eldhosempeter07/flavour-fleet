@@ -14,12 +14,24 @@ import { db1 as db } from "./firebase";
 import {
   AddressType,
   CartInfo,
+  CartItem,
+  Categories,
   FoodItem,
   Order,
   OrderItems,
   Restaurant,
   userOrders,
 } from "./types";
+
+export const getCategories = async () => {
+  const querySnapshot = await getDocs(collection(db, "category"));
+  const categories: Categories[] = [];
+  querySnapshot.docs.map((doc) =>
+    categories.push({ id: doc.id, name: doc.data().name })
+  );
+
+  return categories;
+};
 
 export const addToCart = async (
   id: string,
@@ -76,16 +88,24 @@ export const getCartItems = async (userId: string) => {
       const cartSnapshot = await getDocs(cartQuery);
 
       if (!cartSnapshot.empty) {
-        // Get the first document since there's only one cart per user
         const cartinfo = cartSnapshot.docs[0].data() as CartInfo;
 
         // Initialize an array to store the full cart details
         const cartData = {
           cartinfo,
-          items: [] as (FoodItem & { count: number })[], // Typing the items array
-          resturant: null as Restaurant | null, // Typing resturant as Restaurant or null
-          totalAmount: 0, // Add totalAmount property to store total amount
+          items: [] as (FoodItem & { count: number })[],
+          resturant: null as Restaurant | null,
+          totalAmount: 0,
+          count: 0,
         };
+        const totalCount = cartinfo.items.reduce(
+          (accumulator: number, item: CartItem) => {
+            return accumulator + item.count;
+          },
+          0
+        );
+
+        cartData.count = totalCount;
 
         // Fetch restaurant info from the cart
         const restaurantDoc = await getDoc(
@@ -96,20 +116,37 @@ export const getCartItems = async (userId: string) => {
         }
 
         const itemPromises = cartinfo.items.map(async (item) => {
-          const itemDoc = await getDoc(doc(db, "foodItems", item.itemId));
-          if (itemDoc.exists()) {
-            const itemData = itemDoc.data() as FoodItem;
-            // Calculate total price for the item (item price * count)
-            const totalItemPrice = itemData.price * item.count;
-            // Add the item's total price to the overall cart total
-            cartData.totalAmount += totalItemPrice;
+          console.log(item.itemId);
 
-            return { ...itemData, count: item.count, id: itemDoc.id };
-          }
-          return undefined;
+          const q = query(
+            collection(db, "foodItems"),
+            where("id", "==", item.itemId)
+          );
+          const querySnapshot = await getDocs(q);
+
+          let itemData: (FoodItem & { count: number }) | undefined;
+
+          querySnapshot.forEach((foodItemDoc) => {
+            if (foodItemDoc.exists()) {
+              console.log(foodItemDoc.data());
+              const foodItemData = foodItemDoc.data() as FoodItem;
+              const totalItemPrice = foodItemData.price * item.count;
+              cartData.totalAmount += totalItemPrice;
+
+              itemData = {
+                ...foodItemData,
+                count: item.count,
+                id: foodItemData.id,
+              };
+            }
+          });
+
+          return itemData; // return itemData instead of undefined
         });
 
         const items = await Promise.all(itemPromises);
+        console.log(items);
+
         cartData.items = items.filter(
           (item): item is FoodItem & { count: number } => item !== undefined
         );
@@ -157,15 +194,36 @@ export const getOrders = async (
   const querySnapshot = await getDocs(ordersQuery);
   if (!querySnapshot.empty) {
     const orders = await Promise.all(
-      querySnapshot.docs.map(async (doc) => {
-        const orderData = doc.data();
+      querySnapshot.docs.map(async (orderDoc) => {
+        const orderData = orderDoc.data();
         const itemIds = orderData.orderInfo.orderItems;
+
+        // Fetch the restaurantId from the order data
+        const restaurantId = orderData.orderInfo.restaurantId;
+
+        // Get the restaurant details using the restaurantId
+        const restaurantRef = doc(db, "restaurants", restaurantId);
+        const restaurantSnapshot = await getDoc(restaurantRef);
+        const restaurantData = restaurantSnapshot.data() as Restaurant;
+
+        // Calculate total item count
+        const totalCount = orderData.orderInfo.orderItems.reduce(
+          (accumulator: number, item: { id: String; count: number }) => {
+            return accumulator + item.count;
+          },
+          0
+        );
+
+        // Get menu items using itemIds
         const items = await getMenuItems(itemIds);
 
+        // Return the order with restaurant data
         return {
-          id: doc.id,
+          id: orderDoc.id,
           orderInfo: orderData.orderInfo,
+          totalCount: totalCount,
           items,
+          restaurant: restaurantData,
         };
       })
     );
@@ -270,17 +328,39 @@ export const deleteAddress = async (id: string) => {
   }
 };
 
+// for (const id of menuIds) {
+//   const q = query(collection(db, "foodItems"), where("id", "==", id));
+
+//   const querySnapshot = await getDocs(q);
+
+//   querySnapshot.forEach((foodItemDoc) => {
+//     if (foodItemDoc.exists()) {
+//       const foodItemData = foodItemDoc.data() as FoodItem;
+//       menuItems.push({ ...foodItemData, id: foodItemData.id });
+//     }
+//   });
+// }
+
 export const getMenuItems = async (
   menuIds: OrderItems[]
 ): Promise<FoodItem[]> => {
-  const menuItems: FoodItem[] = [];
-  for (const item of menuIds) {
-    const foodItemDoc = await getDoc(doc(db, "foodItems", item.itemId));
+  console.log(menuIds);
 
-    if (foodItemDoc.exists()) {
-      const foodItemData = foodItemDoc.data() as FoodItem;
-      menuItems.push({ ...foodItemData, id: item.itemId });
-    }
+  const menuItems: FoodItem[] = [];
+  for (const menu of menuIds) {
+    const q = query(
+      collection(db, "foodItems"),
+      where("id", "==", menu.itemId)
+    );
+
+    const querySnapshot = await getDocs(q);
+
+    querySnapshot.forEach((foodItemDoc) => {
+      if (foodItemDoc.exists()) {
+        const foodItemData = foodItemDoc.data() as FoodItem;
+        menuItems.push({ ...foodItemData, id: foodItemData.id });
+      }
+    });
   }
 
   return menuItems;

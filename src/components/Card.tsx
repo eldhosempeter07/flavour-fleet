@@ -16,8 +16,8 @@ const Card: React.FC<FoodItemProps> = ({ foodItem, addToCart }) => {
   }, [foodItem.imageURL, imageUrl]);
 
   return (
-    <div className="w-full mb-4 mx-4 max-w-xs bg-white rounded  dark:bg-gray-800 dark:border-gray-700 overflow-hidden">
-      <div className="relative h-56 w-full bg-gray-200 dark:bg-gray-700 flex justify-center items-center">
+    <div className="w-64 mb-4 mx-4 max-w-xs bg-white rounded  dark:bg-gray-800 dark:border-gray-700 overflow-hidden">
+      <div className="relative h-52 w-52 bg-gray-200 dark:bg-gray-700 flex justify-center items-center">
         {loading ? (
           <span className="text-gray-500">Loading...</span>
         ) : imageUrl ? (
@@ -27,28 +27,39 @@ const Card: React.FC<FoodItemProps> = ({ foodItem, addToCart }) => {
             alt={foodItem.name}
           />
         ) : null}
+        <div>
+          <button
+            className="absolute cursor-pointer bottom-[0.7rem] right-[0.3rem] text-white bg-white rounded-[50%] text-xl p-[0.1rem]"
+            onClick={() => addToCart(foodItem.id)}
+          >
+            ➕
+          </button>
+          <button className="absolute bottom-[0.7rem] right-[2.6rem] text-white bg-white rounded-[50%] text-xl p-[0.1rem]">
+            💚
+          </button>
+        </div>
       </div>
 
       {/* Card Content */}
       <div className="px-1 py-4">
-        <h5 className="text-xl font-semibold text-gray-900 dark:text-white truncate">
+        <h5 className="text-[1rem] font-semibold text-gray-900 dark:text-white truncate">
           {foodItem.name}
         </h5>
-        <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mt-1">
+        {/* <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mt-1">
           {foodItem.description}
-        </p>
+        </p> */}
 
         {/* Price and Add to Cart Button */}
-        <div className="flex items-center justify-between mt-4">
-          <span className="text-2xl font-bold text-gray-800 dark:text-white">
+        <div className="flex items-center justify-between">
+          <span className="text-lg font-semibold text-[0.9rem]">
             ${foodItem.price}
           </span>
-          <button
+          {/* <button
             className="bg-black text-white font-medium rounded px-5 py-2  "
-            onClick={() => addToCart(foodItem.id)}
+            
           >
             Add to cart
-          </button>
+          </button> */}
         </div>
       </div>
     </div>

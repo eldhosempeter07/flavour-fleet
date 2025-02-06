@@ -27,7 +27,7 @@ function App() {
     <div className="">
       <Header />
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<Home />} />
 
         <Route
           path="/register"
@@ -38,7 +38,7 @@ function App() {
           element={user == null ? <Login /> : <Navigate to="/home" />}
         />
 
-        <Route path="/home" element={<Home />} />
+        {/* <Route path="/home" element={<Home />} /> */}
 
         <Route
           path="/profile/:id"

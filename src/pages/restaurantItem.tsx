@@ -38,17 +38,21 @@ const RestaurantItem = () => {
 
   useEffect(() => {
     getImage({
-      imageUrl: "beertown.jpg",
+      imageUrl: `restaurants/${restaurant?.image}`,
       setImageUrl,
       setLoading: setImageLoading,
     });
-  }, []);
+  }, [restaurant?.image]);
+
+  console.log(restaurant);
+
+  console.log(imageUrl);
 
   return (
     <div className="px-5 pt-5">
       <img
         src={imageUrl}
-        alt="beertown"
+        alt={restaurant?.image}
         className="max-h-64 w-full object-cover pointer-events-none"
       />
       <div className="flex justify-between  my-10">

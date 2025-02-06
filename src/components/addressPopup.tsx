@@ -43,11 +43,15 @@ const AddressPopup: React.FC<AddressPopupType> = ({
     };
     if (type === "Edit") {
       fetchAddressById();
+    } else {
+      setAddress(null);
     }
   }, [addressId, type]);
 
+  console.log(type);
+
   return (
-    <div className={"bg-white rounded-lg shadow-lg p-6 max-w-sm w-full"}>
+    <div className={"bg-white rounded shadow-lg p-6 max-w-sm w-full"}>
       <div className="text-right ">
         <span
           className="font-bold cursor-pointer text-xl"
@@ -60,49 +64,109 @@ const AddressPopup: React.FC<AddressPopupType> = ({
         {type} Address
       </p>
       <form>
-        <input
-          type="text"
-          name="fullName"
-          placeholder="Full Name"
-          className="mb-2"
-          onChange={handleFields}
-          value={address?.fullName}
-        />
-        <input
-          type="text"
-          name="street"
-          placeholder="street"
-          className="block  mb-2"
-          onChange={handleFields}
-          value={address?.street}
-        />
-        <input
-          type="text"
-          name="city"
-          placeholder="city"
-          className="block  mb-2"
-          onChange={handleFields}
-          value={address?.city}
-        />
-        <input
-          type="text"
-          name="zipcode"
-          placeholder="zipcode"
-          className="block mb-2"
-          onChange={handleFields}
-          value={address?.zipcode}
-        />
+        <div className="relative mb-4">
+          <input
+            type="text"
+            name="fullName"
+            placeholder=" "
+            className=" border border-gray-200 text-gray-900 rounded block w-full p-2 focus:outline-none text-sm focus:border-gray-300  focus:ring-0"
+            onChange={handleFields}
+            value={address?.fullName}
+          />
 
-        <input
-          type="text"
-          name="phone"
-          placeholder="phone"
-          className="block mb-2"
-          onChange={handleFields}
-          value={address?.phone}
-        />
+          <label
+            className={`absolute text-sm text-gray-600 transition-all duration-300 ease-in-out left-3 ${
+              address?.fullName
+                ? "bottom-[1.8rem] left-2 scale-75 z-40  text-gray-900"
+                : "top-2.5 scale-90"
+            } origin-[0] transform pointer-events-none`}
+          >
+            Full Name
+          </label>
+        </div>
+
+        <div className="relative mb-4">
+          <input
+            type="text"
+            name="street"
+            placeholder=" "
+            className="bg-gray-50 border border-gray-300 text-gray-900 rounded focus:ring-0 focus:border-gray-500 block w-full p-2 focus:outline-none text-sm"
+            onChange={handleFields}
+            value={address?.street}
+          />
+          <label
+            className={`absolute text-sm text-gray-600 transition-all duration-300 ease-in-out left-3 ${
+              address?.street
+                ? "bottom-[1.8rem] left-2 scale-75 z-40  text-gray-800"
+                : "top-2.5 scale-90"
+            } origin-[0] transform pointer-events-none`}
+          >
+            Street
+          </label>
+        </div>
+
+        <div className="relative my-4">
+          <input
+            type="text"
+            name="city"
+            placeholder=" "
+            className="bg-gray-50 border border-gray-300 text-gray-900 rounded focus:ring-0 focus:border-gray-500 block w-full p-2 focus:outline-none text-sm"
+            onChange={handleFields}
+            value={address?.city}
+          />
+          <label
+            className={`absolute text-sm text-gray-600 transition-all duration-300 ease-in-out left-3 ${
+              address?.city
+                ? "bottom-[1.8rem] left-2 scale-75 z-40  text-gray-800"
+                : "top-2.5 scale-90"
+            } origin-[0] transform pointer-events-none`}
+          >
+            City
+          </label>
+        </div>
+
+        <div className="relative mb-4">
+          <input
+            type="text"
+            name="zipcode"
+            placeholder=" "
+            className="bg-gray-50 border border-gray-300 text-gray-900 rounded focus:ring-0 focus:border-gray-100 block w-full p-2 focus:outline-none text-sm"
+            onChange={handleFields}
+            value={address?.zipcode}
+          />
+          <label
+            className={`absolute text-sm text-gray-600 transition-all duration-300 ease-in-out left-3 ${
+              address?.zipcode
+                ? "bottom-[1.8rem] left-2 scale-75 z-40  text-gray-800"
+                : "top-2.5 scale-90"
+            } origin-[0] transform pointer-events-none`}
+          >
+            Zipcode
+          </label>
+        </div>
+
+        <div className="relative mb-4">
+          <input
+            type="text"
+            name="phone"
+            placeholder=" "
+            className="bg-gray-50 border border-gray-300 text-gray-900 rounded focus:ring-0 focus:border-gray-500 block w-full p-2 focus:outline-none text-sm"
+            onChange={handleFields}
+            value={address?.phone}
+          />
+          <label
+            className={`absolute text-sm text-gray-600 transition-all duration-300 ease-in-out left-3 ${
+              address?.phone
+                ? "bottom-[1.8rem] left-2 scale-75 z-40  text-gray-800"
+                : "top-2.5 scale-90"
+            } origin-[0] transform pointer-events-none`}
+          >
+            Phone
+          </label>
+        </div>
+
         <button
-          className="bg-blue-500 hover:bg-blue-600 text-white  rounded px-4 py-2 mt-2 "
+          className="bg-gray-700 text-[1rem] hover:bg-gray-950 capitalize font-semibold w-full py-2 rounded text-white"
           onClick={(e) => {
             e.preventDefault();
             address != null && handleCreateAddress(address);

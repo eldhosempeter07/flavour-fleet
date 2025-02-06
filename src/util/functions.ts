@@ -1,5 +1,6 @@
 import { getDownloadURL, ref } from "firebase/storage";
 import { storage1 } from "./firebase";
+import { Timestamp } from "./types";
 
 export type ImageProps = {
   imageUrl: string;
@@ -28,4 +29,23 @@ export const getImage = ({ imageUrl, setImageUrl, setLoading }: ImageProps) => {
   } else {
     setLoading(false);
   }
+};
+
+export const handleDate = (timestamp: Timestamp) => {
+  const milliseconds =
+    timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000;
+
+  const date = new Date(milliseconds);
+
+  const options: Intl.DateTimeFormatOptions = {
+    month: "short",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  };
+
+  const formattedDate = date.toLocaleString("en-US", options).replace(",", "");
+
+  return formattedDate;
 };

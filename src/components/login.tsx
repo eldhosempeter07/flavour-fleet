@@ -14,19 +14,19 @@ const Login = () => {
     <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
       <a
         href="/"
-        className="flex items-center mb-6 text-3xl font-semibold text-orange-500 dark:text-white"
+        className="flex items-center mb-6 text-2xl font-semibold text-orange-500 dark:text-white"
       >
         Flavour Fleet
       </a>
       <div className="w-full bg-white rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0">
         <div className="p-7 space-y-4">
-          <h1 className="text-xl text-center font-bold leading-tight tracking-tight text-gray-900 md:text-2xl ">
+          <h1 className="text-xl text-center font-bold leading-tight tracking-tight text-gray-900  ">
             LOGIN
           </h1>
 
-          <form className="space-y-4" onSubmit={handleSubmit}>
+          <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
-              <label className="block mb-3 font-medium text-gray-900">
+              <label className="block mb-3 text-sm font-medium text-gray-900">
                 Email
               </label>
               <input
@@ -38,7 +38,7 @@ const Login = () => {
               />
             </div>
             <div>
-              <label className="block mb-3 font-medium text-gray-900">
+              <label className="block mb-3 text-sm font-medium text-gray-900">
                 Password
               </label>
               <input
@@ -51,7 +51,7 @@ const Login = () => {
               />
             </div>
             <button
-              className="bg-gray-700 hover:bg-gray-950 capitalize font-semibold text-lg  w-full py-3 rounded text-white"
+              className="bg-gray-700 text-[1rem] hover:bg-gray-950 capitalize font-semibold w-full py-2 rounded text-white"
               type="submit"
             >
               Submit
