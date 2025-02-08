@@ -136,7 +136,7 @@ export const getRestaurantsByKeyword = async (
 
 export const getSearchKeywords = async (
   searchTerm: string
-): Promise<string[]> => {
+): Promise<string[] | null> => {
   try {
     const searchKeywordsRef = doc(db, "searchKeywords", "JkT9Xy73qW22VpBB6mZ8");
     const snapshot = await getDoc(searchKeywordsRef);
@@ -157,11 +157,10 @@ export const getSearchKeywords = async (
       keyword.toLowerCase().includes(lowerCaseSearch)
     );
 
-    console.log("Matched keywords:", matchedKeywords);
     return matchedKeywords;
   } catch (error) {
     console.error("Error searching keywords:", error);
-    return [];
+    return null;
   }
 };
 

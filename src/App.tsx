@@ -14,6 +14,7 @@ import Address from "./pages/address";
 import Header from "./components/header";
 import AuthRouter from "./util/authRouter";
 import LoadingScreen from "./components/loadingScreen";
+import Payment from "./pages/payment";
 
 function App() {
   const { user, loading } = useContext(AuthContext) ?? {
@@ -65,6 +66,10 @@ function App() {
         <Route
           path="/address/:id"
           element={<AuthRouter element={<Address />} />}
+        />
+        <Route
+          path="/card/:id"
+          element={<AuthRouter element={<Payment />} />}
         />
       </Routes>
     </>

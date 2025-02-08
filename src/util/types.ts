@@ -102,3 +102,13 @@ export type AddressType = {
   zipcode: string;
   fullName: string;
 };
+
+export type CardType = {
+  id?: string;
+  cardholderName: string;
+  cardNumber: string;
+  expiryDate: string;
+  cvv?: number;
+  userId?: string;
+  zipcode: string;
+};

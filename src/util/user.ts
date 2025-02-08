@@ -13,6 +13,7 @@ import {
 import { db1 as db } from "./firebase";
 import {
   AddressType,
+  CardType,
   CartInfo,
   CartItem,
   Categories,
@@ -321,19 +322,6 @@ export const deleteAddress = async (id: string) => {
   }
 };
 
-// for (const id of menuIds) {
-//   const q = query(collection(db, "foodItems"), where("id", "==", id));
-
-//   const querySnapshot = await getDocs(q);
-
-//   querySnapshot.forEach((foodItemDoc) => {
-//     if (foodItemDoc.exists()) {
-//       const foodItemData = foodItemDoc.data() as FoodItem;
-//       menuItems.push({ ...foodItemData, id: foodItemData.id });
-//     }
-//   });
-// }
-
 export const getMenuItems = async (
   menuIds: OrderItems[]
 ): Promise<FoodItem[]> => {
@@ -355,4 +343,75 @@ export const getMenuItems = async (
   }
 
   return menuItems;
+};
+
+export const createCard = async (card: CardType) => {
+  try {
+    await addDoc(collection(db, "cards"), card);
+    console.log("New card added");
+    return "Success";
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const updateCard = async (card: CardType, id: string) => {
+  try {
+    await setDoc(doc(db, "cards", id), card);
+    console.log("Card updated");
+    return "Success";
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getCards = async (
+  userId: string
+): Promise<CardType[] | undefined> => {
+  try {
+    const cardsQuery = query(
+      collection(db, "cards"),
+      where("userId", "==", userId)
+    );
+    const cardSnapShot = await getDocs(cardsQuery);
+
+    const cards = cardSnapShot.docs.map((card) => {
+      const cardInfo = card.data();
+
+      return {
+        id: card.id,
+        cardholderName: cardInfo.cardholderName,
+        cardNumber: cardInfo.cardNumber,
+        expiryDate: cardInfo.expiryDate,
+        cvv: cardInfo.cvv,
+        zipcode: cardInfo.zipcode,
+      };
+    });
+
+    return cards as CardType[];
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getCardById = async (id: string) => {
+  try {
+    const cardDoc = await getDoc(doc(db, "cards", id));
+
+    if (cardDoc.exists()) {
+      const cardData = cardDoc.data() as CardType;
+      return cardData;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const deleteCard = async (id: string) => {
+  try {
+    await deleteDoc(doc(db, "cards", id));
+    console.log("Card document deleted successfully.");
+  } catch (error) {
+    console.log(error);
+  }
 };
