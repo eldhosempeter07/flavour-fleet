@@ -48,8 +48,6 @@ const AddressPopup: React.FC<AddressPopupType> = ({
     }
   }, [addressId, type]);
 
-  console.log(type);
-
   return (
     <div className={"bg-white rounded shadow-lg p-6 max-w-sm w-full"}>
       <div className="text-right ">

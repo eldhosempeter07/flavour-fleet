@@ -4,6 +4,8 @@ import "./index.css";
 import App from "./App";
 import { BrowserRouter as Router } from "react-router-dom";
 import { AuthProvider } from "./util/authContext";
+import { CategoryProvider } from "./util/categoryContext";
+import { RestaurantProvider } from "./util/restaurantContext";
 // import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(
@@ -14,7 +16,11 @@ root.render(
   <Router>
     <React.StrictMode>
       <AuthProvider>
-        <App />
+        <RestaurantProvider>
+          <CategoryProvider>
+            <App />
+          </CategoryProvider>
+        </RestaurantProvider>
       </AuthProvider>
     </React.StrictMode>
   </Router>

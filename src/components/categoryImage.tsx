@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Categories } from "../util/types";
 import { getImage } from "../util/functions";
+import { useCategory } from "../util/categoryContext";
 
 type CategoryProps = {
   category: Categories;
-  setCategory: (category: string) => void;
 };
 
-const CategoryImage: React.FC<CategoryProps> = ({ category, setCategory }) => {
+const CategoryImage: React.FC<CategoryProps> = ({ category }) => {
+  const { setSelectedCategory, selectedCategory } = useCategory();
+
   const [imageUrl, setImageUrl] = useState("");
   const [loading, setLoading] = useState(true);
 
@@ -21,24 +23,36 @@ const CategoryImage: React.FC<CategoryProps> = ({ category, setCategory }) => {
 
   return (
     <div>
-      <div className="relative w-16 h-20 mx-5 flex justify-center items-center">
-        {loading ? (
-          <span className="text-gray-500">Loading...</span>
-        ) : imageUrl ? (
-          <div
-            className="cursor-pointer"
-            onClick={() => setCategory(category.name)}
-          >
+      <div className="relative w-16 h-24 mx-5 flex justify-center items-center">
+        <div
+          className="cursor-pointer"
+          onClick={() => {
+            selectedCategory === category.name
+              ? setSelectedCategory(null)
+              : setSelectedCategory(category.name);
+          }}
+        >
+          {loading ? (
+            <div className="text-gray-500 w-16 h-16"></div>
+          ) : imageUrl ? (
             <img
-              className="w-full h-full object-contain rounded pointer-events-none"
+              className={`w-16 h-16 object-contain rounded pointer-events-none ${
+                selectedCategory === category.name
+                  ? "bg-orange-400 rounded-full"
+                  : null
+              } `}
               src={imageUrl}
               alt={category.name}
             />
-            <h4 className="text-center text-sm font-semibold z-40">
-              {category.name}
-            </h4>
-          </div>
-        ) : null}
+          ) : null}
+          <h4
+            className={`${
+              selectedCategory === category.name ? "text-orange-400" : null
+            } text-center text-sm font-semibold z-40`}
+          >
+            {category.name}
+          </h4>
+        </div>
       </div>
     </div>
   );

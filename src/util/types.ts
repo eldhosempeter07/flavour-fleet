@@ -27,6 +27,7 @@ export type Restaurant = {
   menu?: string[];
   menuItems?: FoodItem[];
   timing?: { close: string; day: string; holiday: boolean; open: string }[];
+  rating: string;
 };
 
 export type CartItem = {

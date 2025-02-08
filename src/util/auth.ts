@@ -59,11 +59,9 @@ export const getUserInfo = async (email: string) => {
     );
 
     const querySnapshot = await getDocs(userQuery);
-    console.log(querySnapshot.empty);
 
     if (!querySnapshot.empty) {
       const userDoc = querySnapshot.docs[0];
-      console.log(userDoc.data());
       return { id: userDoc.id, ...userDoc.data() };
     }
   } catch (error) {

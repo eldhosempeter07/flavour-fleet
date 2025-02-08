@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { Navigate } from "react-router-dom";
 import { AuthContext } from "./authContext";
+import LoadingScreen from "../components/loadingScreen";
 
 interface AuthRouteProps {
   element: React.ReactNode;
@@ -12,9 +13,13 @@ const AuthRouter: React.FC<AuthRouteProps> = ({ element }) => {
     loading: true,
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  // if (!loading) {
+  //   return (
+  //     <>
+  //       <LoadingScreen />
+  //     </>
+  //   );
+  // }
 
   if (!user) {
     return <Navigate to="/login" replace />;

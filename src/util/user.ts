@@ -42,7 +42,6 @@ export const addToCart = async (
   try {
     const cartRef = doc(db, "carts", userId);
     const cartSnap = await getDoc(cartRef);
-    console.log(id, count, resId, userId);
 
     if (cartSnap.exists()) {
       const cartData = cartSnap.data();
@@ -57,8 +56,6 @@ export const addToCart = async (
       } else {
         updatedItems.push({ itemId: id, count });
       }
-
-      console.log(updatedItems);
 
       await updateDoc(cartRef, { items: updatedItems });
     } else {
@@ -116,8 +113,6 @@ export const getCartItems = async (userId: string) => {
         }
 
         const itemPromises = cartinfo.items.map(async (item) => {
-          console.log(item.itemId);
-
           const q = query(
             collection(db, "foodItems"),
             where("id", "==", item.itemId)
@@ -128,7 +123,6 @@ export const getCartItems = async (userId: string) => {
 
           querySnapshot.forEach((foodItemDoc) => {
             if (foodItemDoc.exists()) {
-              console.log(foodItemDoc.data());
               const foodItemData = foodItemDoc.data() as FoodItem;
               const totalItemPrice = foodItemData.price * item.count;
               cartData.totalAmount += totalItemPrice;
@@ -145,7 +139,6 @@ export const getCartItems = async (userId: string) => {
         });
 
         const items = await Promise.all(itemPromises);
-        console.log(items);
 
         cartData.items = items.filter(
           (item): item is FoodItem & { count: number } => item !== undefined
@@ -344,8 +337,6 @@ export const deleteAddress = async (id: string) => {
 export const getMenuItems = async (
   menuIds: OrderItems[]
 ): Promise<FoodItem[]> => {
-  console.log(menuIds);
-
   const menuItems: FoodItem[] = [];
   for (const menu of menuIds) {
     const q = query(

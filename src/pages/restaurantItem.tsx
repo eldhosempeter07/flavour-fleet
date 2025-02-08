@@ -28,7 +28,6 @@ const RestaurantItem = () => {
   };
 
   const addItemToCart = (itemid: string) => {
-    console.log(itemid);
     if (id && user) return addToCart(itemid, 1, id, user.uid);
     navigate("/login");
   };
@@ -43,10 +42,6 @@ const RestaurantItem = () => {
       setLoading: setImageLoading,
     });
   }, [restaurant?.image]);
-
-  console.log(restaurant);
-
-  console.log(imageUrl);
 
   return (
     <div className="px-5 pt-5">

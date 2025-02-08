@@ -18,7 +18,6 @@ const CartPage = () => {
   const fetchCartItems = async () => {
     if (user?.uid) {
       const items = await getCartItems(user?.uid);
-      console.log(items);
 
       setCartItems(items);
     }

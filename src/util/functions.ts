@@ -9,8 +9,6 @@ export type ImageProps = {
 };
 
 export const getImage = ({ imageUrl, setImageUrl, setLoading }: ImageProps) => {
-  console.log(imageUrl);
-
   const imagePath = `gs://yumhub-d8edd.appspot.com/${imageUrl}`;
 
   if (imagePath) {

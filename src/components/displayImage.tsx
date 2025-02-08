@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { storage1 } from "../util/firebase"; // Import Firebase config
 import { ref, getDownloadURL } from "firebase/storage"; // Import required Firebase functions
+import LoadingScreen from "./loadingScreen";
 
 const ImageDisplay = () => {
   const [imageUrl, setImageUrl] = useState(""); // State to store the image URL
@@ -23,10 +24,13 @@ const ImageDisplay = () => {
         setLoading(false);
       });
   }, []);
-
-  if (loading) {
-    return <div>Loading...</div>; // You can show a loading spinner or message
-  }
+  // if (!loading) {
+  //   return (
+  //     <>
+  //       <LoadingScreen />
+  //     </>
+  //   );
+  // }
 
   return (
     <div>

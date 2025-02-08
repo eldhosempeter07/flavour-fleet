@@ -13,6 +13,7 @@ import Orders from "./pages/orders";
 import Address from "./pages/address";
 import Header from "./components/header";
 import AuthRouter from "./util/authRouter";
+import LoadingScreen from "./components/loadingScreen";
 
 function App() {
   const { user, loading } = useContext(AuthContext) ?? {
@@ -21,24 +22,27 @@ function App() {
   };
 
   if (loading) {
-    return <div>Loading ...</div>;
+    return (
+      <>
+        <LoadingScreen />
+      </>
+    );
   }
   return (
-    <div className="">
+    <>
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/search" element={<Home />} />
 
         <Route
           path="/register"
-          element={user == null ? <SignUp /> : <Navigate to="/home" />}
+          element={user == null ? <SignUp /> : <Navigate to="/" />}
         />
         <Route
           path="/login"
-          element={user == null ? <Login /> : <Navigate to="/home" />}
+          element={user == null ? <Login /> : <Navigate to="/" />}
         />
-
-        {/* <Route path="/home" element={<Home />} /> */}
 
         <Route
           path="/profile/:id"
@@ -63,7 +67,7 @@ function App() {
           element={<AuthRouter element={<Address />} />}
         />
       </Routes>
-    </div>
+    </>
   );
 }
 

@@ -28,7 +28,7 @@ const CartCard: React.FC<CartCardProps> = ({
     <div className="flex flex-wrap bg-white rounded items-center justify-center mb-10 ">
       <div className="relative w-52 h-36 flex justify-center items-center">
         {loading ? (
-          <span className="text-gray-500">Loading...</span>
+          <span className="text-gray-500"></span>
         ) : imageUrl ? (
           <img
             className="w-full h-full object-contain rounded pointer-events-none"

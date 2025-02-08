@@ -12,14 +12,18 @@ const Card: React.FC<FoodItemProps> = ({ foodItem, addToCart }) => {
   const [imageUrl, setImageUrl] = useState("");
 
   useEffect(() => {
-    getImage({ imageUrl: foodItem.imageURL, setImageUrl, setLoading });
-  }, [foodItem.imageURL, imageUrl]);
+    getImage({
+      imageUrl: `foods/${foodItem.name}.jpg`,
+      setImageUrl,
+      setLoading,
+    });
+  }, [foodItem.name, imageUrl]);
 
   return (
     <div className="w-64 mb-4 mx-4 max-w-xs bg-white rounded  dark:bg-gray-800 dark:border-gray-700 overflow-hidden">
       <div className="relative h-52 w-52 bg-gray-200 dark:bg-gray-700 flex justify-center items-center">
         {loading ? (
-          <span className="text-gray-500">Loading...</span>
+          <div className="h-52 w-52 text-gray-500"></div>
         ) : imageUrl ? (
           <img
             className="w-full h-full object-cover pointer-events-none"

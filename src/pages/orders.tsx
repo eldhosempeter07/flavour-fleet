@@ -15,7 +15,6 @@ const Orders = () => {
     const fetchOrders = async () => {
       if (user?.uid) {
         const userOrders = await getOrders(user?.uid);
-        console.log(userOrders);
         setOrders(userOrders);
       }
     };

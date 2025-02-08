@@ -27,8 +27,6 @@ const Checkout = () => {
     fetchCartItems();
   }, []);
 
-  console.log(cartItems);
-
   const fetchAddresses = async () => {
     if (user) {
       const addresses = await getAddresses(user.uid);
@@ -72,11 +70,6 @@ const Checkout = () => {
       state: "checkout",
     });
   };
-
-  console.log(
-    cartItems?.totalAmount &&
-      (3.99 + cartItems?.totalAmount + cartItems?.totalAmount * 0.13).toFixed(2)
-  );
 
   const handleEditAddress = (id: string) => {
     navigate(`/address/${user?.uid}`, {

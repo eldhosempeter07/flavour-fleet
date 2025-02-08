@@ -27,7 +27,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
     <div className="flex items-center flex-wrap w-full bg-white rounded  mb-10 py-4 ">
       <div className="relative w-80 h-56 md:flex-1">
         {loading ? (
-          <span className="text-gray-500">Loading...</span>
+          <span className="text-gray-500"></span>
         ) : imageUrl ? (
           <img
             className="w-full h-full object-contain rounded pointer-events-none"
