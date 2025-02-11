@@ -41,6 +41,12 @@ const CardPopup: React.FC<CardPopupType> = ({
         expiryDate: "",
         zipcode: "",
       });
+      setInitialValues({
+        cardholderName: "",
+        cardNumber: "",
+        expiryDate: "",
+        zipcode: "",
+      });
     }
   }, [cardId, type]);
 

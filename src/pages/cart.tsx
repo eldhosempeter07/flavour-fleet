@@ -1,10 +1,14 @@
 import React, { useContext, useEffect, useState } from "react";
-import { addToCart, getCartItems } from "../util/user";
-import { AuthContext } from "../util/authContext";
-import { Cart } from "../util/types";
+import {
+  addToCart,
+  deleteFromCart,
+  emptyCart,
+  getCartItems,
+} from "../util/user";
+import { AuthContext } from "../util/context/authContext";
 import { useNavigate } from "react-router-dom";
-import { getImage } from "../util/functions";
 import CartCard from "../components/cartCard";
+import { useCart } from "../util/context/cartContext";
 
 const CartPage = () => {
   const navigate = useNavigate();
@@ -12,65 +16,100 @@ const CartPage = () => {
     user: null,
     loading: true,
   };
-
-  const [cartItems, setCartItems] = useState<Cart | undefined>(undefined);
+  const [cartLoading, setCartLoading] = useState(false);
+  const { cart, setCart } = useCart();
+  const [addItemLoading, setAddItemLoading] = useState(false);
 
   const fetchCartItems = async () => {
     if (user?.uid) {
       const items = await getCartItems(user?.uid);
-
-      setCartItems(items);
+      if (items === undefined) {
+        return setCart(null);
+      }
+      setCart(items);
+      setCartLoading(false);
     }
   };
 
   useEffect(() => {
+    setCartLoading(true);
     fetchCartItems();
   }, []);
 
-  const addItemToCart = (itemid: string, count: number) => {
-    if (cartItems?.cartinfo?.restarantId && user) {
-      addToCart(itemid, count, cartItems?.cartinfo?.restarantId, user.uid);
-      return fetchCartItems();
+  const addItemToCart = async (itemid: string, count: number) => {
+    if (cart?.cartinfo?.restarantId && user) {
+      setAddItemLoading(true);
+      await addToCart(itemid, count, cart?.cartinfo?.restarantId, user.uid);
+      await fetchCartItems();
+      return setAddItemLoading(false);
     }
     navigate("/login");
   };
 
-  if (loading) {
-    return <div>Loading..</div>;
-  }
+  const handleDeleteCartItem = async (id: string) => {
+    if (user?.uid) {
+      setAddItemLoading(true);
+      await deleteFromCart(id, user.uid);
+      await fetchCartItems();
+      return setAddItemLoading(false);
+    }
+  };
+
+  const handleEmptyCart = async () => {
+    if (user?.uid) {
+      setAddItemLoading(true);
+      await emptyCart(user.uid);
+      await fetchCartItems();
+      return setAddItemLoading(false);
+    }
+  };
 
   return (
     <div className="flex justify-center ">
-      {cartItems === undefined ? (
+      {cart === undefined ? (
         <div className="flex justify-center items-center h-screen">
           <h3>Cart Is Empty</h3>
         </div>
       ) : (
         <>
-          <div className="w-full max-w-6xl">
-            <h3 className="text-center font-bold text-lg uppercase ">Cart</h3>
-            <div className="border-2 border-gray-200 rounded px-3 py-4 mt-10 ">
-              <a
-                href={`/restaurant/${cartItems?.cartinfo?.restarantId}`}
-                className="ml-5 font-bold text-gray-800 underline uppercase text-lg"
-              >
-                {cartItems?.resturant?.name}
-              </a>
-              {cartItems?.items.map((item) => (
-                <div key={item.id} className="m-7">
-                  <CartCard foodItem={item} addItemToCart={addItemToCart} />
-                </div>
-              ))}
+          {cartLoading ? null : (
+            <div className="w-full max-w-6xl">
+              <h3 className="text-center font-bold text-lg uppercase ">Cart</h3>
+              <div className="border-2 border-gray-200 rounded px-3 py-4 mt-10 ">
+                <a
+                  href={`/restaurant/${cart?.cartinfo?.restarantId}`}
+                  className="ml-5 font-bold text-gray-800 underline uppercase text-lg"
+                >
+                  {cart?.resturant?.name}
+                </a>
+                {cart?.items.map((item) => (
+                  <div key={item.id} className="m-7">
+                    <CartCard
+                      foodItem={item}
+                      addItemToCart={addItemToCart}
+                      handleDeleteCartItem={handleDeleteCartItem}
+                      addItemLoading={addItemLoading}
+                    />
+                  </div>
+                ))}
+              </div>
+              <div className=" text-center sm:mb-4 mb-10 ">
+                <button
+                  className="bg-black uppercase rounded px-3 text-sm font-semibold py-3 mt-10 text-white"
+                  onClick={() => navigate(`/checkout/${user?.uid}`)}
+                >
+                  Checkout
+                </button>
+
+                <button
+                  className="bg-black ml-4 uppercase rounded px-3 text-sm font-semibold py-3 mt-10 text-white"
+                  onClick={handleEmptyCart}
+                >
+                  Empty Cart
+                </button>
+              </div>
             </div>
-            <div className=" text-center sm:mb-4 mb-10 ">
-              <button
-                className="bg-black uppercase rounded px-3 text-sm font-semibold py-3 mt-10 text-white"
-                onClick={() => navigate(`/checkout/${user?.uid}`)}
-              >
-                Checkout
-              </button>
-            </div>
-          </div>
+          )}
         </>
       )}
     </div>

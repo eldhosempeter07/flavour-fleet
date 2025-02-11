@@ -6,8 +6,8 @@ import {
   getRestaurants,
   getRestaurantsByCategory,
 } from "../util/userRestaurant";
-import { useCategory } from "../util/categoryContext";
-import { useRestaurant } from "../util/restaurantContext";
+import { useCategory } from "../util/context/categoryContext";
+import { useRestaurant } from "../util/context/restaurantContext";
 import { useNavigate } from "react-router-dom";
 
 const Home = () => {

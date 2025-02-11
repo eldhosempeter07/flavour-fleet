@@ -1,14 +1,13 @@
 import React, { useContext } from "react";
 import { Navigate } from "react-router-dom";
-import { AuthContext } from "./authContext";
-import LoadingScreen from "../components/loadingScreen";
+import { AuthContext } from "./context/authContext";
 
 interface AuthRouteProps {
   element: React.ReactNode;
 }
 
 const AuthRouter: React.FC<AuthRouteProps> = ({ element }) => {
-  const { user, loading } = useContext(AuthContext) ?? {
+  const { user } = useContext(AuthContext) ?? {
     user: null,
     loading: true,
   };

@@ -2,10 +2,12 @@ import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Restaurant } from "../util/types";
 import { getRestaurantById } from "../util/userRestaurant";
-import { addToCart } from "../util/user";
-import { AuthContext } from "../util/authContext";
+import { addToCart, getCartItems } from "../util/user";
+import { AuthContext } from "../util/context/authContext";
 import Card from "../components/Card";
 import { getImage } from "../util/functions";
+import addToCartSound from "../assets/add_to_cart.mp3";
+import { useCart } from "../util/context/cartContext";
 
 const RestaurantItem = () => {
   const { id } = useParams();
@@ -22,17 +24,41 @@ const RestaurantItem = () => {
     fetchResturantById();
   }, [id]);
 
-  const { user, loading } = useContext(AuthContext) ?? {
-    user: null,
-    loading: true,
+  const { setCart } = useCart();
+  const fetchCartItems = async () => {
+    if (user?.uid) {
+      const items = await getCartItems(user?.uid);
+      if (items === undefined) {
+        return setCart(null);
+      }
+      setCart(items);
+    }
   };
 
-  const addItemToCart = (itemid: string) => {
-    if (id && user) return addToCart(itemid, 1, id, user.uid);
+  const { user } = useContext(AuthContext) ?? {
+    user: null,
+  };
+
+  const playSound = () => {
+    const audio = new Audio(addToCartSound);
+    audio.play();
+  };
+
+  const addItemToCart = async (itemid: string) => {
+    if (id && user) {
+      setAddItemLoading(true);
+      await addToCart(itemid, 1, id, user.uid);
+
+      await fetchCartItems();
+      playSound();
+      return setAddItemLoading(false);
+    }
+
     navigate("/login");
   };
 
   const [imageLoading, setImageLoading] = useState(true);
+  const [addItemLoading, setAddItemLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
 
   useEffect(() => {
@@ -50,8 +76,8 @@ const RestaurantItem = () => {
         alt={restaurant?.image}
         className="max-h-64 w-full object-cover pointer-events-none"
       />
-      <div className="flex justify-between  my-10">
-        <h3 className="text-3xl font-bold uppercase text-gray-800">
+      <div className="flex justify-between md:flex-row flex-col  my-10">
+        <h3 className="md:text-3xl text-lg font-bold uppercase text-gray-800">
           {restaurant?.name}
         </h3>
         <h3 className="text-lg font-semibold  text-gray-700">
@@ -60,7 +86,11 @@ const RestaurantItem = () => {
       </div>
       <div className="flex flex-wrap">
         {restaurant?.menuItems?.map((item) => (
-          <Card foodItem={item} addToCart={addItemToCart} />
+          <Card
+            foodItem={item}
+            addToCart={addItemToCart}
+            addItemLoading={addItemLoading}
+          />
         ))}
       </div>
     </div>

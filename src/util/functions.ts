@@ -47,3 +47,7 @@ export const handleDate = (timestamp: Timestamp) => {
 
   return formattedDate;
 };
+
+export const maskCardNumber = (cardNumber: string) => {
+  return cardNumber.slice(0, -4).replace(/\d/g, "*") + cardNumber.slice(-4);
+};

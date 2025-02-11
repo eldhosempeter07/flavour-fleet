@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Categories } from "../util/types";
 import { getImage } from "../util/functions";
-import { useCategory } from "../util/categoryContext";
+import { useCategory } from "../util/context/categoryContext";
 
 type CategoryProps = {
   category: Categories;

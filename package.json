@@ -9,6 +9,7 @@
     "cra-template-typescript": "1.2.0",
     "firebase": "^11.2.0",
     "formik": "^2.4.6",
+    "lucide-react": "^0.475.0",
     "postcss": "^8.5.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

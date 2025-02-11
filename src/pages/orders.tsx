@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { getOrders } from "../util/user";
-import { AuthContext } from "../util/authContext";
+import { AuthContext } from "../util/context/authContext";
 import { Order, userOrders } from "../util/types";
 import OrderCard from "../components/orderCard";
 

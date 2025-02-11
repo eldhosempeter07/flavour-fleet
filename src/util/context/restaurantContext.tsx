@@ -1,5 +1,5 @@
 import React, { createContext, ReactNode, useContext, useState } from "react";
-import { Restaurant } from "./types";
+import { Restaurant } from "../types";
 
 interface RestaurantContextType {
   restaurants: Restaurant[] | null;

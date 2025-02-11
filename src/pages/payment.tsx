@@ -1,21 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
-import AddressPopup from "../components/addressPopup";
-import { AddressType, CardType } from "../util/types";
-import {
-  createAddress,
-  createCard,
-  deleteAddress,
-  deleteCard,
-  getAddresses,
-  getCards,
-  updateAddress,
-  updateCard,
-} from "../util/user";
-import { AuthContext } from "../util/authContext";
+import { CardType } from "../util/types";
+import { createCard, deleteCard, getCards, updateCard } from "../util/user";
+import { AuthContext } from "../util/context/authContext";
 import { useLocation, useNavigate } from "react-router-dom";
-import { handleDate } from "../util/functions";
-import { Timestamp } from "firebase/firestore";
+import { maskCardNumber } from "../util/functions";
 import CardPopup from "../components/cardPopup";
+import Back from "../assets/back.png";
 
 const Payment = () => {
   const { state } = useLocation();
@@ -25,7 +15,7 @@ const Payment = () => {
   const [type, setType] = useState("Add");
   const [editCard, setEditCard] = useState<string | null>(null);
   const [cards, setCards] = useState<CardType[] | undefined>(undefined);
-  const { user, loading } = useContext(AuthContext) ?? {
+  const { user } = useContext(AuthContext) ?? {
     user: null,
     loading: false,
   };
@@ -39,6 +29,10 @@ const Payment = () => {
     }
   };
 
+  useEffect(() => {
+    fetchCards();
+  }, [user]);
+
   const handlePopup = () => {
     setType("Add");
     setShow((prev) => !prev);
@@ -48,9 +42,7 @@ const Payment = () => {
     if (type === "Edit" && editCard) {
       await updateCard({ ...card, id: editCard }, editCard);
       handlePopup();
-      if (state?.from === "checkout") {
-        navigate(`/checkout/${user?.uid}`);
-      }
+
       return fetchCards();
     }
     const res = await createCard({ ...card, userId: user?.uid });
@@ -66,13 +58,28 @@ const Payment = () => {
   };
 
   useEffect(() => {
-    fetchCards();
-  }, [user]);
+    if (state?.from === "checkout" && state.id) {
+      setType("Edit");
+      setEditCard(state?.id);
+      setShow(true);
+    }
+  }, [state]);
 
-  console.log(cards);
+  useEffect(() => {
+    if (state?.from === "checkout" && state.id === undefined) {
+      setType("Add");
+      setShow(true);
+    }
+  }, [state]);
 
   return (
     <div className="mt-10">
+      {state?.from === "checkout" ? (
+        <a href={`/checkout/${user?.uid}`} className=" ml-4 font-semibold ">
+          <img src={Back} alt="back" width={"20px"} className="inline mr-2 " />
+          Go back to checkout
+        </a>
+      ) : null}
       <h3 className="text-xl text-center font-bold leading-tight tracking-tight text-gray-900">
         Payment Details
       </h3>
@@ -81,7 +88,10 @@ const Payment = () => {
       <div className="flex justify-center my-5">
         <button
           className="bg-gray-900 rounded py-2 px-3 text-white text-sm font-bold"
-          onClick={() => setShow(true)}
+          onClick={() => {
+            setType("Add");
+            setShow(true);
+          }}
         >
           Add Card
         </button>
@@ -97,7 +107,7 @@ const Payment = () => {
                     {card.cardholderName}
                   </h5>
                   <p className="text-sm mt-[8px]  text-gray-600 truncate">
-                    {card.cardNumber}
+                    {maskCardNumber(card.cardNumber)}
                   </p>
                   <p className="text-sm mt-[2px]  text-gray-600 truncate">
                     {card.expiryDate}

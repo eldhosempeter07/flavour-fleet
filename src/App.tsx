@@ -5,7 +5,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import Home from "./pages/home";
 import RestaurantItem from "./pages/restaurantItem";
 import Cart from "./pages/cart";
-import { AuthContext } from "./util/authContext";
+import { AuthContext } from "./util/context/authContext";
 import Checkout from "./pages/checkout";
 import Success from "./pages/success";
 import Profile from "./pages/profile";

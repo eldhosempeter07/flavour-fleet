@@ -3,9 +3,10 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import { BrowserRouter as Router } from "react-router-dom";
-import { AuthProvider } from "./util/authContext";
-import { CategoryProvider } from "./util/categoryContext";
-import { RestaurantProvider } from "./util/restaurantContext";
+import { AuthProvider } from "./util/context/authContext";
+import { CategoryProvider } from "./util/context/categoryContext";
+import { RestaurantProvider } from "./util/context/restaurantContext";
+import { CartProvider } from "./util/context/cartContext";
 // import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(
@@ -18,7 +19,9 @@ root.render(
       <AuthProvider>
         <RestaurantProvider>
           <CategoryProvider>
-            <App />
+            <CartProvider>
+              <App />
+            </CartProvider>
           </CategoryProvider>
         </RestaurantProvider>
       </AuthProvider>

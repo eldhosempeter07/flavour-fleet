@@ -66,10 +66,43 @@ export const addToCart = async (
         userId,
       });
 
-      return 0;
+      return cartRef.id;
     }
   } catch (error) {
     console.error("Error adding item to cart:", error);
+  }
+};
+
+export const deleteFromCart = async (id: string, userId: string) => {
+  try {
+    const cartRef = doc(db, "carts", userId);
+    const cartSnap = await getDoc(cartRef);
+
+    if (cartSnap.exists()) {
+      const cartData = cartSnap.data();
+      let updatedItems = (cartData.items || []).filter(
+        (item: any) => item.itemId !== id
+      );
+
+      // If the cart is empty after removal, delete the cart document
+      if (updatedItems.length === 0) {
+        await deleteDoc(cartRef);
+      } else {
+        await updateDoc(cartRef, { items: updatedItems });
+      }
+    }
+  } catch (error) {
+    console.error("Error deleting item from cart:", error);
+  }
+};
+
+// Empty the entire cart
+export const emptyCart = async (userId: string) => {
+  try {
+    const cartRef = doc(db, "carts", userId);
+    await deleteDoc(cartRef);
+  } catch (error) {
+    console.error("Error emptying cart:", error);
   }
 };
 

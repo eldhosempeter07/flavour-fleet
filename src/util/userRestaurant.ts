@@ -94,8 +94,6 @@ export const getRestaurantsByKeyword = async (
   keyword: string
 ): Promise<Restaurant[] | null> => {
   try {
-    console.log(keyword);
-
     // Query foodItems where the keywords array contains the search keyword (assumed to be lowercase)
     const foodItemsRef = collection(db, "foodItems");
     const q = query(

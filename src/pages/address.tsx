@@ -7,19 +7,19 @@ import {
   getAddresses,
   updateAddress,
 } from "../util/user";
-import { AuthContext } from "../util/authContext";
-import { useLocation, useNavigate } from "react-router-dom";
+import { AuthContext } from "../util/context/authContext";
+import { useLocation } from "react-router-dom";
+import Back from "../assets/back.png";
 
 const Address = () => {
   const { state } = useLocation();
-  const navigate = useNavigate();
   const [show, setShow] = useState(false);
   const [type, setType] = useState("Add");
   const [editAddress, setEditAddress] = useState<string | null>(null);
   const [addresses, setAddresses] = useState<AddressType[] | undefined>(
     undefined
   );
-  const { user, loading } = useContext(AuthContext) ?? {
+  const { user } = useContext(AuthContext) ?? {
     user: null,
     loading: false,
   };
@@ -45,9 +45,7 @@ const Address = () => {
     if (type === "Edit" && editAddress) {
       await updateAddress({ ...address, id: editAddress }, editAddress);
       handlePopup();
-      if (state?.from === "checkout") {
-        navigate(`/checkout/${user?.uid}`);
-      }
+
       return fetchAddresses();
     }
     const res = await createAddress({ ...address, userId: user?.uid });
@@ -63,15 +61,28 @@ const Address = () => {
   };
 
   useEffect(() => {
-    if (state?.from === "checkout") {
+    if (state?.from === "checkout" && state.id) {
       setType("Edit");
       setEditAddress(state?.id);
       setShow(true);
     }
   }, [state]);
 
+  useEffect(() => {
+    if (state?.from === "checkout" && state.id === undefined) {
+      setType("Add");
+      setShow(true);
+    }
+  }, [state]);
+
   return (
     <div className="mt-10">
+      {state?.from === "checkout" ? (
+        <a href={`/checkout/${user?.uid}`} className=" ml-4 font-semibold ">
+          <img src={Back} alt="back" width={"20px"} className="inline mr-2 " />
+          Go back to checkout
+        </a>
+      ) : null}
       <h3 className=" text-xl text-center font-bold leading-tight tracking-tight text-gray-900  ">
         Address
       </h3>
@@ -84,46 +95,48 @@ const Address = () => {
         </button>
       </div>
       <div className="flex items-center justify-center rounded ">
-        <div className="w-full mx-3 rounded sm:mx-0 sm:w-1/2 border-2 border-gray-100 py-5">
-          {addresses?.map((address) => (
-            <div className="flex w-full bg-white rounded items-center ">
-              <div className=" mb-3 flex-auto ml-3">
-                <h5 className="text-xl font-bold  text-gray-900 truncate">
-                  {address.fullName}
-                </h5>
-                <p className="text-sm mt-[8px]  text-gray-600 truncate">
-                  {address.street}
-                </p>
-                <p className="text-sm mt-[2px]  text-gray-600 truncate">
-                  {address.city},{address.zipcode}
-                </p>
-                <p className="text-sm mt-[2px]  text-gray-600 truncate">
-                  {address.phone}
-                </p>
+        {addresses?.length === 0 ? null : (
+          <div className="w-full mx-3 rounded sm:mx-0 sm:w-1/2 border-2 border-gray-100 py-5">
+            {addresses?.map((address) => (
+              <div className="flex w-full bg-white rounded items-center ">
+                <div className=" mb-3 flex-auto ml-3">
+                  <h5 className="text-xl font-bold  text-gray-900 truncate">
+                    {address.fullName}
+                  </h5>
+                  <p className="text-sm mt-[8px]  text-gray-600 truncate">
+                    {address.street}
+                  </p>
+                  <p className="text-sm mt-[2px]  text-gray-600 truncate">
+                    {address.city},{address.zipcode}
+                  </p>
+                  <p className="text-sm mt-[2px]  text-gray-600 truncate">
+                    {address.phone}
+                  </p>
+                </div>
+                <div className="flex justify-between mr-3">
+                  <button
+                    className="mr-2 text-gray-600 hover:underline font-bold cursor-pointer"
+                    onClick={() => {
+                      setType("Edit");
+                      address.id && setEditAddress(address.id);
+                      setShow(true);
+                    }}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="text-red-500 mr-2 font-bold cursor-pointer hover:underline"
+                    onClick={() => {
+                      address.id && handleDelete(address.id);
+                    }}
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
-              <div className="flex justify-between mr-3">
-                <button
-                  className="mr-2 text-gray-600 hover:underline font-bold cursor-pointer"
-                  onClick={() => {
-                    setType("Edit");
-                    address.id && setEditAddress(address.id);
-                    setShow(true);
-                  }}
-                >
-                  Edit
-                </button>
-                <button
-                  className="text-red-500 mr-2 font-bold cursor-pointer hover:underline"
-                  onClick={() => {
-                    address.id && handleDelete(address.id);
-                  }}
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {show ? (

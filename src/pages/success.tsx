@@ -1,13 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
-import { AddressType, Order, userOrders } from "../util/types";
-import { getAddresses, getOrderById } from "../util/user";
-import {
-  Navigate,
-  useLocation,
-  useNavigate,
-  useParams,
-} from "react-router-dom";
-import { AuthContext } from "../util/authContext";
+import { AddressType } from "../util/types";
+import { getAddresses } from "../util/user";
+import { Navigate, useLocation, useParams } from "react-router-dom";
+import { AuthContext } from "../util/context/authContext";
 
 const Success = () => {
   const { id } = useParams();
@@ -16,8 +11,7 @@ const Success = () => {
     undefined
   );
 
-  const navigate = useNavigate();
-  const { user, loading } = useContext(AuthContext) ?? {
+  const { user } = useContext(AuthContext) ?? {
     user: null,
     loading: true,
   };

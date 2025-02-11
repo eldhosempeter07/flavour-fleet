@@ -1,19 +1,19 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { auth1 } from "../util/firebase";
-import { AuthContext } from "../util/authContext";
-import { Cart } from "../util/types";
+import { AuthContext } from "../util/context/authContext";
 import { getCartItems } from "../util/user";
 import {
-  getRestaurants,
   getRestaurantsByKeyword,
   getSearchKeywords,
 } from "../util/userRestaurant";
-import { useRestaurant } from "../util/restaurantContext";
+import { useRestaurant } from "../util/context/restaurantContext";
 import Next from "../assets/next.png";
+import { useCart } from "../util/context/cartContext";
+import { ShoppingCart } from "lucide-react";
 
 const Header = () => {
-  const { user, loading } = useContext(AuthContext) ?? {
+  const { user } = useContext(AuthContext) ?? {
     user: null,
     loading: false,
   };
@@ -25,7 +25,7 @@ const Header = () => {
     navigate("/");
   };
   const [keyWordsLoading, setKeyWordsLoading] = useState(false);
-  const [cartItems, setCartItems] = useState<Cart | undefined>(undefined);
+  const { cart, setCart } = useCart();
   const [search, setSearch] = useState<string>("");
   const [keywords, setKeywords] = useState<string[] | null>(null);
 
@@ -43,7 +43,11 @@ const Header = () => {
   const fetchCartItems = async () => {
     if (user?.uid) {
       const items = await getCartItems(user?.uid);
-      setCartItems(items);
+
+      if (items === undefined) {
+        return setCart(null);
+      }
+      setCart(items);
     }
   };
 
@@ -87,8 +91,6 @@ const Header = () => {
     setKeywords(null);
     setSearch("");
   };
-
-  console.log(keyWordsLoading, search.length, keywords);
 
   return (
     <div className="flex justify-between items-center mt-4 px-4 sm:px-6 lg:px-8">
@@ -207,10 +209,10 @@ const Header = () => {
                 href={`/cart/${user?.uid}`}
                 className="text-orange-500 hover:text-orange-600 font-semibold uppercase cursor-pointer"
               >
-                <span className="bg-orange-500 rounded-full px-[0.3rem] text-white text-[0.8rem] absolute top-[-0.4rem] right-[-0.7rem]">
-                  {cartItems?.count}
+                <span className="bg-orange-500 rounded-full px-[0.3rem] text-white text-[0.8rem] absolute top-[-0.6rem] right-[-0.5rem]">
+                  {cart?.count}
                 </span>
-                🛒
+                <ShoppingCart size={20} />
               </a>
             </div>
           </>
@@ -228,32 +230,32 @@ const Header = () => {
       {isMenuOpen && (
         <div className="lg:hidden absolute top-12 left-0 w-full bg-white shadow-md z-50">
           <div className="flex flex-col items-center space-y-4 py-4">
-            <div className="relative">
-              <input
-                placeholder="Search Flavour Fleet"
-                className="rounded-2xl  focus:outline-none bg-gray-100 text-gray-900 placeholder:text-black text-sm w-full py-2 px-2"
-                onClick={() => {
-                  isOpen === true && setIsOpen(false);
-                }}
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-              {keywords !== null &&
-              keywords?.length > 0 &&
-              search.length > 2 ? (
-                <div className="absolute left-0 top-6  mt-4 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-10">
-                  {keywords.map((keyword) => (
-                    <div
-                      className="border-[0.1rem] cursor-pointer border-gray-100 py-2 flex justify-between"
-                      onClick={() => handleKeywords(keyword)}
-                    >
-                      <h4 className="ml-3">{keyword} </h4>
-                      <img src={Next} alt="next" className=" mr-3 w-5 h-5" />
-                    </div>
-                  ))}
-                </div>
-              ) : null}
-            </div>
+            {location.pathname === "/" || location.pathname === "/search" ? (
+              <div className="relative">
+                <input
+                  placeholder="Search Flavour Fleet"
+                  className="rounded-2xl  focus:outline-none bg-gray-100 text-gray-900 placeholder:text-black text-sm w-96 py-2 px-2"
+                  onClick={() => {
+                    isOpen === true && setIsOpen(false);
+                  }}
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+                {keywords !== null && search.length > 2 ? (
+                  <div className="absolute left-0 top-6  mt-4 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                    {keywords.map((keyword) => (
+                      <div
+                        className="border-[0.1rem] cursor-pointer border-gray-100 py-2 flex justify-between"
+                        onClick={() => handleKeywords(keyword)}
+                      >
+                        <h4 className="ml-3">{keyword} </h4>
+                        <img src={Next} alt="next" className=" mr-3 w-5 h-5" />
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
             {user?.uid ? (
               <>
                 <a
@@ -269,7 +271,7 @@ const Header = () => {
                   Address
                 </a>
                 <a
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  className="text-orange-500 hover:text-orange-600 font-semibold uppercase"
                   href={`/card/${user?.uid}`}
                 >
                   Payment
@@ -292,9 +294,9 @@ const Header = () => {
                     className="text-orange-500 hover:text-orange-600 font-semibold uppercase cursor-pointer"
                   >
                     <span className="bg-orange-500 rounded-full px-[0.3rem] text-white text-[0.8rem] absolute  top-[-0.4rem] right-[-0.7rem]">
-                      {cartItems?.count}
+                      {cart?.count}
                     </span>
-                    🛒
+                    <ShoppingCart size={20} />
                   </a>
                 </div>
               </>
