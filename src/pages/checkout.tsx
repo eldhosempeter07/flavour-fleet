@@ -144,7 +144,7 @@ const Checkout = () => {
               addresses?.map((address) => (
                 <div className="flex justify-between">
                   <div>
-                    <h4 className="text-[1rem] text-gray-700 uppercase font-bold">
+                    <h4 className="text-[1rem] text-orange-500 uppercase font-bold">
                       {address.fullName}
                     </h4>
                     <h4 className="text-gray-600 text-sm font-semibold mt-2">
@@ -189,6 +189,9 @@ const Checkout = () => {
                 cards?.map((card) => (
                   <div className="flex justify-between mt-5">
                     <div>
+                      <h4 className="text-[0.9rem] font-[700] uppercase text-orange-500 mb-2">
+                        Card Details
+                      </h4>
                       <h4 className="text-[1rem] text-gray-700 font-semibold ">
                         {card.cardholderName}
                       </h4>
@@ -213,7 +216,7 @@ const Checkout = () => {
             </div>
 
             <div className="mt-10 ">
-              <h4 className="text-[1rem] font-[700] uppercase text-gray-800 mb-2">
+              <h4 className="text-[1rem] font-[700] uppercase text-orange-500 mb-2">
                 Price Details
               </h4>
               <div className="">
