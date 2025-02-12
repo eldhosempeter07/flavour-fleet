@@ -40,6 +40,11 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
         <h3 className="font-bold tracking-tight text-xl uppercase">
           {order.restaurant?.name}
         </h3>
+        <h4 className="my-2">
+          Order ID:{" "}
+          <span className="font-semibold text-gray-800">{order.id}</span>
+        </h4>
+
         <h4 className="my-3 ">
           {order.totalCount} items for ${order.orderInfo.fees.total} on{" "}
           {handleDate(order.orderInfo.createdAt as Timestamp)}

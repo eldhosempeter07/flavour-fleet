@@ -25,7 +25,7 @@ const Card: React.FC<FoodItemProps> = ({
   }, [foodItem.name, imageUrl]);
 
   return (
-    <div className="md:w-64 w-44 mb-4 mx-4 max-w-xs bg-white rounded  dark:bg-gray-800 dark:border-gray-700 overflow-hidden">
+    <div className="md:w-64 w-44 mb-4 mx-4 max-w-xs  rounded   dark:border-gray-700 overflow-hidden">
       <div className="relative md:h-52 h-44 w-44  md:w-52 flex justify-center items-center">
         {loading ? (
           <div className="h-52 w-52 text-gray-500"></div>

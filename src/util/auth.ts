@@ -38,8 +38,28 @@ export const signUp = async (email: string, password: string, name: string) => {
 export const login = async (email: string, password: string) => {
   try {
     await signInWithEmailAndPassword(auth, email, password);
-  } catch (error) {
-    console.log("Error", error);
+  } catch (error: unknown) {
+    if (error instanceof Error && "code" in error) {
+      const firebaseError = error as { code: string; message: string };
+      console.log(firebaseError.code);
+
+      // Handle specific Firebase authentication errors
+      if (
+        firebaseError.code === "auth/user-not-found" ||
+        firebaseError.code === "auth/wrong-password" ||
+        firebaseError.code === "auth/invalid-credential"
+      ) {
+        return "Invalid username or password";
+      } else if (firebaseError.code === "auth/too-many-requests") {
+        return "Too many failed attempts. Please try again later.";
+      } else if (firebaseError.code === "auth/network-request-failed") {
+        return "Network error. Please check your connection.";
+      }
+
+      return firebaseError.message; // Default Firebase error message
+    }
+
+    return "An unknown error occurred.";
   }
 };
 

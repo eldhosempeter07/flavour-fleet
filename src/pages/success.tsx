@@ -43,7 +43,10 @@ const Success = () => {
       </p>
 
       <div className="mb-5">
-        <a href={`/order/${id}`} className="underline font-semibold text-lg ">
+        <a
+          href={`/orders/${user?.uid}`}
+          className="underline font-semibold text-lg "
+        >
           Click To View Order Details
         </a>
       </div>
@@ -67,15 +70,6 @@ const Success = () => {
           <h4>Estimated Delivery Time ⏳ </h4>
           <h4 className="text-gray-800 font-semibold">45 minutes</h4>
         </div>
-      </div>
-
-      <div>
-        <h4 className="w-[60rem] text-center text-gray-800 font-semibold">
-          In the meantime, relax and look forward to your meal! If you need any
-          assistance, feel free to contact our support team at +1 5555234231 or
-          flavorfleet@gmail.com. Thanks for choosing us! We can't wait to serve
-          you again
-        </h4>
       </div>
     </div>
   );

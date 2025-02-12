@@ -66,9 +66,15 @@ const CartPage = () => {
 
   return (
     <div className="flex justify-center ">
-      {cart === undefined ? (
-        <div className="flex justify-center items-center h-screen">
-          <h3>Cart Is Empty</h3>
+      {cart === undefined || cart === null ? (
+        <div className="flex flex-col justify-center items-center h-screen">
+          <h3 className="font-bold">Cart Is Empty</h3>
+          <button
+            onClick={() => navigate("/")}
+            className="bg-gray-800 py-1 px-2 rounded text-white mt-3"
+          >
+            Go back to home
+          </button>
         </div>
       ) : (
         <>

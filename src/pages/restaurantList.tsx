@@ -1,9 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { db1 } from "../util/firebase";
+import React from "react";
 import { Restaurant } from "../util/types";
 import RestaurantCard from "../components/resCard";
-import { getRestaurants } from "../util/userRestaurant";
 
 type RestaurantListProps = {
   restaurants: Restaurant[] | null;

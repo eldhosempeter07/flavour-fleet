@@ -21,12 +21,12 @@ const RestaurantCard: React.FC<RestaurantProps> = ({ restaurant }) => {
   }, [restaurant.image]);
   return (
     <div className="mt-10 w-full mb-4 mx-4 max-w-xs bg-white rounded  dark:bg-gray-800 dark:border-gray-700 overflow-hidden">
-      <div className="relative h-32 object-cover w-44 md:w-64 overflow-hidden bg-gray-200 dark:bg-gray-700 flex justify-center items-center">
+      <div className="relative md:h-32 h-28 object-cover w-44 md:w-64 overflow-hidden  dark:bg-gray-700 flex justify-center items-center">
         {loading ? (
           <span className="text-gray-500"></span>
         ) : imageUrl ? (
           <img
-            className="w-fit h-fit object-fill rounded-lg pointer-events-none"
+            className="w-fit h-fit object-fill rounded-lg md:rounded-none pointer-events-none"
             src={imageUrl}
             alt={restaurant.name}
           />

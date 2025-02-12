@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { login } from "../util/auth";
 
 const Login = () => {
+  const [error, setError] = useState<string | null>(null);
+
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -13,12 +15,13 @@ const Login = () => {
       email: Yup.string()
         .email("Invalid email address")
         .required("Email is required"),
-      password: Yup.string()
-        .min(6, "Password must be at least 6 characters")
-        .required("Password is required"),
+      password: Yup.string().required("Password is required"),
     }),
     onSubmit: async (values) => {
-      await login(values.email, values.password);
+      const res = await login(values.email, values.password);
+      if (res === "Invalid username or password") {
+        setError(res);
+      }
     },
   });
 
@@ -68,11 +71,25 @@ const Login = () => {
                 value={formik.values.password}
               />
               {formik.touched.password && formik.errors.password ? (
-                <p className="text-red-500 text-sm">{formik.errors.password}</p>
+                <p
+                  className={`text-red-500 text-sm ${
+                    error !== null ? "!mb-1" : null
+                  }`}
+                >
+                  {formik.errors.password}
+                </p>
               ) : null}
             </div>
+
+            {error !== null ? (
+              <h3 className="text-red-500 font-semibold text-center">
+                {error}
+              </h3>
+            ) : null}
             <button
-              className="bg-gray-700 text-[1rem] hover:bg-gray-950 capitalize font-semibold w-full py-2 rounded text-white"
+              className={`bg-gray-700 text-[1rem] hover:bg-gray-950 capitalize font-semibold w-full  rounded text-white py-2 ${
+                error !== null ? "!mt-1" : null
+              }`}
               type="submit"
             >
               Submit
