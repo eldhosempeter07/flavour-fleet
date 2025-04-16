@@ -30,7 +30,7 @@ const SignUp: React.FC = () => {
     <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
       <a
         href="/"
-        className="flex items-center mb-6 text-3xl font-semibold text-orange-500 dark:text-white"
+        className="flex items-center mb-6 text-3xl font-semibold text-orange-500 "
       >
         Flavour Fleet
       </a>

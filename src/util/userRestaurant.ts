@@ -94,7 +94,8 @@ export const getRestaurantsByKeyword = async (
   keyword: string
 ): Promise<Restaurant[] | null> => {
   try {
-    // Query foodItems where the keywords array contains the search keyword (assumed to be lowercase)
+    console.log("hi");
+
     const foodItemsRef = collection(db, "foodItems");
     const q = query(
       foodItemsRef,
@@ -136,6 +137,8 @@ export const getSearchKeywords = async (
   searchTerm: string
 ): Promise<string[] | null> => {
   try {
+    console.log(searchTerm);
+
     const searchKeywordsRef = doc(db, "searchKeywords", "JkT9Xy73qW22VpBB6mZ8");
     const snapshot = await getDoc(searchKeywordsRef);
 
@@ -149,13 +152,16 @@ export const getSearchKeywords = async (
       console.log("Invalid keywords format!");
       return [];
     }
+    console.log(data);
 
     const lowerCaseSearch = searchTerm.toLowerCase();
-    const matchedKeywords = data.keywords.filter((keyword: string) =>
-      keyword.toLowerCase().includes(lowerCaseSearch)
-    );
+    const matchedKeywords = data.keywords.filter((keyword: string) => {
+      console.log(keyword, keyword.toLowerCase().includes(lowerCaseSearch));
 
-    return matchedKeywords;
+      return keyword.toLowerCase().includes(lowerCaseSearch);
+    });
+
+    return matchedKeywords.slice(0, 5);
   } catch (error) {
     console.error("Error searching keywords:", error);
     return null;

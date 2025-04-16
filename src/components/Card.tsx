@@ -25,7 +25,7 @@ const Card: React.FC<FoodItemProps> = ({
   }, [foodItem.name, imageUrl]);
 
   return (
-    <div className="md:w-64 w-44 mb-4 mx-4 max-w-xs  rounded   dark:border-gray-700 overflow-hidden">
+    <div className="md:w-64 w-44 mb-4 mx-4 max-w-xs  rounded overflow-hidden">
       <div className="relative md:h-52 h-44 w-44  md:w-52 flex justify-center items-center">
         {loading ? (
           <div className="h-52 w-52 text-gray-500"></div>
@@ -38,7 +38,7 @@ const Card: React.FC<FoodItemProps> = ({
         ) : null}
         <div>
           <button
-            className="disabled:cursor-not-allowed absolute cursor-pointer bottom-[0.7rem] right-[0.3rem] text-white bg-white rounded-[50%] text-xl p-[0.1rem]"
+            className=" absolute cursor-pointer bottom-[0.7rem] right-[0.3rem] text-white bg-white rounded-[50%] text-xl p-[0.1rem]"
             disabled={addItemLoading}
             onClick={() => {
               setId(foodItem.id);
@@ -55,12 +55,9 @@ const Card: React.FC<FoodItemProps> = ({
 
       {/* Card Content */}
       <div className="px-1 py-4">
-        <h5 className="text-[1rem] font-semibold text-gray-900 dark:text-white truncate">
+        <h5 className="text-[1rem] font-semibold text-gray-900 truncate">
           {foodItem.name}
         </h5>
-        {/* <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mt-1">
-          {foodItem.description}
-        </p> */}
 
         {/* Price and Add to Cart Button */}
         <div className="flex items-center justify-between">

@@ -20,8 +20,8 @@ const RestaurantCard: React.FC<RestaurantProps> = ({ restaurant }) => {
     });
   }, [restaurant.image]);
   return (
-    <div className="mt-10 w-full mb-4 mx-4 max-w-xs bg-white rounded  dark:bg-gray-800 dark:border-gray-700 overflow-hidden">
-      <div className="relative md:h-32 h-28 object-cover w-44 md:w-64 overflow-hidden  dark:bg-gray-700 flex justify-center items-center">
+    <div className="mt-10 w-full mb-4 mx-4 max-w-xs bg-white rounded overflow-hidden">
+      <div className="relative md:h-32 h-28 object-cover w-44 md:w-64 overflow-hidden flex justify-center items-center">
         {loading ? (
           <span className="text-gray-500"></span>
         ) : imageUrl ? (
@@ -35,16 +35,16 @@ const RestaurantCard: React.FC<RestaurantProps> = ({ restaurant }) => {
 
       {/* RestaurantCard Content */}
       <div className="mt-2">
-        <h5 className="text-xl leading-tight tracking-tight font-semibold text-gray-900 dark:text-white truncate">
+        <h5 className="text-xl leading-tight tracking-tight font-semibold text-gray-900  truncate">
           {restaurant.name}
         </h5>
         {/* <p className="text-sm  font-medium text-gray-700 dark:text-gray-300 mt-1">
           {restaurant.location}
         </p> */}
-        <p className="text-sm  font-medium tracking-tight text-gray-600 dark:text-gray-300 mt-1">
+        <p className="text-sm  font-medium tracking-tight text-gray-600  mt-1">
           $4.99 Delivery Fee
         </p>
-        <p className="text-sm  font-medium tracking-tight text-gray-600 dark:text-gray-300 mt-[0.2rem]">
+        <p className="text-sm  font-medium tracking-tight text-gray-600  mt-[0.2rem]">
           {restaurant.rating}{" "}
           <img src={Star} className="w-4 mb-1 inline" alt="star" /> (
           {Math.floor(Math.random() * (200 - 100 + 1)) + 100}+)

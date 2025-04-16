@@ -8,81 +8,66 @@ import {
   getSearchKeywords,
 } from "../util/userRestaurant";
 import { useRestaurant } from "../util/context/restaurantContext";
-import Next from "../assets/next.png";
 import { useCart } from "../util/context/cartContext";
 import { ShoppingCart } from "lucide-react";
+import { useDebounce } from "../util/hooks/useDebounce";
+import KeywordDropdown from "./keywordDropdown";
 
 const Header = () => {
-  const { user } = useContext(AuthContext) ?? {
-    user: null,
-    loading: false,
-  };
+  const { user } = useContext(AuthContext) ?? { user: null };
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams] = useSearchParams();
   const keyword = searchParams.get("keyword") || "No keyword provided";
+
+  const { cart, setCart } = useCart();
+  const { restaurants, setRestaurants } = useRestaurant();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 500);
+  const [keywords, setKeywords] = useState<string[] | null>(null);
+  const [keyWordsLoading, setKeyWordsLoading] = useState(false);
+
   const handleLogout = () => {
     auth1.signOut();
     navigate("/");
   };
-  const [keyWordsLoading, setKeyWordsLoading] = useState(false);
-  const { cart, setCart } = useCart();
-  const [search, setSearch] = useState<string>("");
-  const [keywords, setKeywords] = useState<string[] | null>(null);
-
-  const fetchRestaurantsByKeyword = async () => {
-    const restaurantInfo = await getRestaurantsByKeyword(keyword);
-    setRestaurants(restaurantInfo);
-  };
 
   useEffect(() => {
+    const fetchRestaurantsByKeyword = async () => {
+      const restaurantInfo = await getRestaurantsByKeyword(keyword);
+      setRestaurants(restaurantInfo);
+    };
     if (keyword !== "No keyword provided") {
       fetchRestaurantsByKeyword();
     }
-  }, []);
-
-  const fetchCartItems = async () => {
-    if (user?.uid) {
-      const items = await getCartItems(user?.uid);
-
-      if (items === undefined) {
-        return setCart(null);
-      }
-      setCart(items);
-    }
-  };
+  }, [keyword, setRestaurants]);
 
   useEffect(() => {
-    if (user?.uid) {
-      fetchCartItems();
-    }
-  }, [user?.uid]);
-  const location = useLocation();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
-  const { restaurants, setRestaurants } = useRestaurant();
-
-  useEffect(() => {
-    setKeyWordsLoading(true);
-    const handleSearch = async () => {
-      if (search !== "" && search.length > 2) {
-        const keywords = await getSearchKeywords(search);
-        setKeywords(keywords);
-        setKeyWordsLoading(false);
+    const fetchCartItems = async () => {
+      if (user?.uid) {
+        const items = await getCartItems(user.uid);
+        setCart(items ?? null);
       }
     };
+    fetchCartItems();
+  }, [user?.uid, setCart]);
 
-    if (search.length < 3) {
-      setKeywords(null);
-    }
-
-    setTimeout(() => {
-      handleSearch();
-    }, 2000);
-  }, [search]);
-
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
+  useEffect(() => {
+    const fetchKeywords = async () => {
+      if (debouncedSearch.length >= 1) {
+        setKeyWordsLoading(true);
+        const result = await getSearchKeywords(debouncedSearch);
+        setKeywords(result);
+        setKeyWordsLoading(false);
+      } else {
+        setKeywords(null);
+      }
+    };
+    fetchKeywords();
+  }, [debouncedSearch]);
 
   const handleKeywords = async (keyword: string) => {
     const restaurantInfo = await getRestaurantsByKeyword(keyword);
@@ -93,7 +78,7 @@ const Header = () => {
   };
 
   return (
-    <div className="flex justify-between items-center mt-4 px-4 sm:px-6 lg:px-8">
+    <div className="flex md:flex-row justify-between items-center mt-4 px-4 sm:px-6 lg:px-8">
       <div className="ml-5">
         <a
           href="/"
@@ -102,56 +87,44 @@ const Header = () => {
           Flavour Fleet
         </a>
       </div>
-      {/* Mobile Menu Button */}
       <div className="lg:hidden flex items-center">
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           className="text-orange-500 font-bold hover:text-orange-600"
         >
-          {isMenuOpen ? "✖" : "☰"} {/* Toggle Menu Icon */}
+          {isMenuOpen ? "✖" : "☰"}
         </button>
       </div>
 
-      {/* Desktop Navigation */}
+      {/* Desktop Nav */}
       <div className="hidden lg:flex space-x-5 mr-5">
-        {location.pathname === "/" || location.pathname === "/search" ? (
+        {(location.pathname === "/" || location.pathname === "/search") && (
           <div className="relative">
             <input
               placeholder="Search Flavour Fleet"
-              className="rounded-2xl  focus:outline-none bg-gray-100 text-gray-900 placeholder:text-black text-sm w-96 py-2 px-2"
-              onClick={() => {
-                isOpen === true && setIsOpen(false);
-              }}
+              className="rounded-2xl bg-gray-100 text-gray-900 placeholder:text-black text-sm w-96 py-2 px-2 focus:outline-none"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            {keywords !== null && search.length > 2 ? (
-              <div className="absolute left-0 top-6  mt-4 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-10">
-                {keywords.map((keyword) => (
-                  <div
-                    className="border-[0.1rem] cursor-pointer border-gray-100 py-2 flex justify-between"
-                    onClick={() => handleKeywords(keyword)}
-                  >
-                    <h4 className="ml-3">{keyword} </h4>
-                    <img src={Next} alt="next" className=" mr-3 w-5 h-5" />
-                  </div>
-                ))}
-              </div>
-            ) : null}
+            <KeywordDropdown
+              keywords={keywords}
+              loading={keyWordsLoading}
+              search={search}
+              onSelect={handleKeywords}
+            />
           </div>
-        ) : null}
+        )}
         {user?.uid ? (
           <>
             <div className="relative">
-              {/* Dropdown Toggle Button */}
               <button
-                onClick={toggleDropdown}
-                className="flex items-center text-orange-500 hover:text-orange-600 font-semibold uppercase focus:outline-none"
+                onClick={() => setIsOpen(!isOpen)}
+                className="flex items-center text-orange-500 hover:text-orange-600 font-semibold uppercase"
               >
-                {user.email?.slice(0, 1)}
+                {user.email?.[0]}
                 <svg
                   className={`w-4 h-4 ml-2 transition-transform ${
-                    isOpen ? "transform rotate-180" : ""
+                    isOpen ? "rotate-180" : ""
                   }`}
                   fill="none"
                   stroke="currentColor"
@@ -166,34 +139,17 @@ const Header = () => {
                   />
                 </svg>
               </button>
-
-              {/* Dropdown Menu */}
               {isOpen && (
                 <div className="absolute right-[-2rem] mt-4 w-32 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
-                  <a
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    href={`/profile/${user?.uid}`}
-                  >
-                    Profile
-                  </a>
-                  <a
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    href={`/address/${user?.uid}`}
-                  >
-                    Address
-                  </a>
-                  <a
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    href={`/card/${user?.uid}`}
-                  >
-                    Payment
-                  </a>
-                  <a
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    href={`/orders/${user?.uid}`}
-                  >
-                    Orders
-                  </a>
+                  {["profile", "address", "card", "orders"].map((item) => (
+                    <a
+                      key={item}
+                      href={`/${item}/${user.uid}`}
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      {item.charAt(0).toUpperCase() + item.slice(1)}
+                    </a>
+                  ))}
                   <button
                     onClick={handleLogout}
                     className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -203,10 +159,9 @@ const Header = () => {
                 </div>
               )}
             </div>
-
             <div className="relative inline">
               <a
-                href={`/cart/${user?.uid}`}
+                href={`/cart/${user.uid}`}
                 className="text-orange-500 hover:text-orange-600 font-semibold uppercase cursor-pointer"
               >
                 <span className="bg-orange-500 rounded-full px-[0.3rem] text-white text-[0.8rem] absolute top-[-0.6rem] right-[-0.5rem]">
@@ -218,70 +173,45 @@ const Header = () => {
           </>
         ) : (
           <a
+            href="/login"
             className="text-right font-semibold uppercase cursor-pointer text-orange-500 hover:text-orange-600"
-            href={`/login`}
           >
             Login
           </a>
         )}
       </div>
 
-      {/* Mobile Navigation */}
+      {/* Mobile Nav */}
       {isMenuOpen && (
         <div className="lg:hidden absolute top-12 left-0 w-full bg-white shadow-md z-50">
           <div className="flex flex-col items-center space-y-4 py-4">
-            {location.pathname === "/" || location.pathname === "/search" ? (
+            {(location.pathname === "/" || location.pathname === "/search") && (
               <div className="relative">
                 <input
                   placeholder="Search Flavour Fleet"
-                  className="rounded-2xl  focus:outline-none bg-gray-100 text-gray-900 placeholder:text-black text-sm w-96 py-2 px-2"
-                  onClick={() => {
-                    isOpen === true && setIsOpen(false);
-                  }}
+                  className="rounded-2xl bg-gray-100 text-gray-900 placeholder:text-black text-sm w-96 py-2 px-2 focus:outline-none"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
-                {keywords !== null && search.length > 2 ? (
-                  <div className="absolute left-0 top-6  mt-4 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-10">
-                    {keywords.map((keyword) => (
-                      <div
-                        className="border-[0.1rem] cursor-pointer border-gray-100 py-2 flex justify-between"
-                        onClick={() => handleKeywords(keyword)}
-                      >
-                        <h4 className="ml-3">{keyword} </h4>
-                        <img src={Next} alt="next" className=" mr-3 w-5 h-5" />
-                      </div>
-                    ))}
-                  </div>
-                ) : null}
+                <KeywordDropdown
+                  keywords={keywords}
+                  loading={keyWordsLoading}
+                  search={search}
+                  onSelect={handleKeywords}
+                />
               </div>
-            ) : null}
+            )}
             {user?.uid ? (
               <>
-                <a
-                  className="text-orange-500 hover:text-orange-600 font-semibold uppercase"
-                  href={`/profile/${user?.uid}`}
-                >
-                  Profile
-                </a>
-                <a
-                  className="text-orange-500 hover:text-orange-600 font-semibold uppercase"
-                  href={`/address/${user?.uid}`}
-                >
-                  Address
-                </a>
-                <a
-                  className="text-orange-500 hover:text-orange-600 font-semibold uppercase"
-                  href={`/card/${user?.uid}`}
-                >
-                  Payment
-                </a>
-                <a
-                  className="text-orange-500 hover:text-orange-600 font-semibold uppercase"
-                  href={`/orders/${user?.uid}`}
-                >
-                  Orders
-                </a>
+                {["profile", "address", "card", "orders"].map((item) => (
+                  <a
+                    key={item}
+                    href={`/${item}/${user.uid}`}
+                    className="text-orange-500 hover:text-orange-600 font-semibold uppercase"
+                  >
+                    {item.charAt(0).toUpperCase() + item.slice(1)}
+                  </a>
+                ))}
                 <button
                   onClick={handleLogout}
                   className="text-orange-500 hover:text-orange-600 font-semibold uppercase"
@@ -290,10 +220,10 @@ const Header = () => {
                 </button>
                 <div className="relative inline">
                   <a
-                    href={`/cart/${user?.uid}`}
+                    href={`/cart/${user.uid}`}
                     className="text-orange-500 hover:text-orange-600 font-semibold uppercase cursor-pointer"
                   >
-                    <span className="bg-orange-500 rounded-full px-[0.3rem] text-white text-[0.8rem] absolute  top-[-0.4rem] right-[-0.7rem]">
+                    <span className="bg-orange-500 rounded-full px-[0.3rem] text-white text-[0.8rem] absolute top-[-0.4rem] right-[-0.7rem]">
                       {cart?.count}
                     </span>
                     <ShoppingCart size={20} />
@@ -302,8 +232,8 @@ const Header = () => {
               </>
             ) : (
               <a
+                href="/login"
                 className="text-orange-500 hover:text-orange-600 font-semibold uppercase"
-                href={`/login`}
               >
                 Login
               </a>
